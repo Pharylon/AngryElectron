@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngryElectron", "AngryElect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngryElectron.Tests", "AngryElectron.Tests\AngryElectron.Tests.csproj", "{D2FFF028-4493-495F-8F7A-D59D3FFA40B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngryElectronDomain", "AngryElectronDomain\AngryElectronDomain.csproj", "{6D916230-E569-43D4-A0EB-F765A5F1D288}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{D2FFF028-4493-495F-8F7A-D59D3FFA40B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2FFF028-4493-495F-8F7A-D59D3FFA40B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2FFF028-4493-495F-8F7A-D59D3FFA40B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D916230-E569-43D4-A0EB-F765A5F1D288}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D916230-E569-43D4-A0EB-F765A5F1D288}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D916230-E569-43D4-A0EB-F765A5F1D288}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D916230-E569-43D4-A0EB-F765A5F1D288}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
