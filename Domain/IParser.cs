@@ -9,6 +9,7 @@ namespace AngryElectron.Domain
     interface IParser
     {
         IEnumerable<String> ParsableSymbols { get; set; }
-       
+        IEnumerable<String> ParsableSymbols;
+        IEquation parse(string reaction);
     }
 }
