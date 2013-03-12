@@ -4,7 +4,7 @@
 Angry Electron is the project name for a stoichiometry calculator. The User of this stoichiometry calculator will be able to enter in the molecules of a chemical equation and the calculator will balance the equation for the user, telling them how many of each molecule should be used for the equation to be balanced.
 
 ##Breakdown
-- Parsing - Interpreting user's typed inputs to domain objects.
+- [Parsing](/Documentation/Chemical Equation Backus-Naur Form.md) -  - Interpreting user's typed inputs to domain objects.
 	- Equation is made up of two Sides.
 		- One side is Reactants.
 		- One side is Products
