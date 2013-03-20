@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class ElementGroup : IList<IParsableSymbols>, IParsableSymbols
+    class ElementGroup : List<IParsableSymbols>, IParsableSymbols
     {
-        //ElementGroup is a grouping of Elements. It contains anything that implements IParsableSymbols - so it can recursively include other
+        //ElementGroup is a grouping of Elements. It contains anything that implements IParsableSymbols - including other
         //ElementGroups. This is necessary as ElementGroup is meant to represent both a molecule and a chemical group. So an ElementGroup representing
         //a molecule may contain both individual elements and other ElementGroups that represent chemical groupings.
         string type;
