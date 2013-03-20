@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class Element : IEquatable<Element>, IComparable<Element>
+    public class Element : IEquatable<Element>, IComparable<Element>, IParsableSymbols
     {
         public string Symbol { get; set; }
         public int AtomicNumber { get; set; }
@@ -30,6 +30,11 @@ namespace AngryElectron.Domain
                 return 0;
             else
                 return -1;
+        }
+
+        public IEnumerable<string> ParsableSymbols
+        {
+            get { return new List<string>() { Symbol }; }
         }
     }
 }

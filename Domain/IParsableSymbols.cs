@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    interface IParser
+    interface IParsableSymbols
     {
-        IEnumerable<String> ParsableSymbols { get; set; }
-        IEquation Parse(string reaction);
+        IEnumerable<String> ParsableSymbols { get; }
     }
 }
