@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class ChemicalEquation
+    class ChemicalEquation : IEquation
     {
         //ChemicalEquation will hold two lists - the Reactants and Products. Each one will be a list that implements
         //IParsableSymbols. Therefore, list items may be an element or an ElementGroup.
