@@ -17,7 +17,7 @@ namespace AngryElectron.Domain
            
         }
 
-        public new bool Equals(Element other)
+        public bool Equals(Element other)
         {
             return (this.AtomicNumber == other.AtomicNumber);
         }
@@ -35,6 +35,11 @@ namespace AngryElectron.Domain
         public IEnumerable<string> ParsableSymbols
         {
             get { return new List<string>() { Symbol }; }
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

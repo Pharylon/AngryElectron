@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    interface IParsableSymbols
+    public interface IParsableSymbols
     {
         IEnumerable<String> ParsableSymbols { get; }
     }

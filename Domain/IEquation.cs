@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    interface IEquation
+    public interface IEquation
     {
     }
 }

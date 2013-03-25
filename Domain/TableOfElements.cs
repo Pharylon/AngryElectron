@@ -11,7 +11,7 @@ namespace AngryElectron.Domain
 {
     public class TableOfElements : List<Element>
     {
-        private const string _tableOfElementsFilePath = "../../../../Domain/Data/TableOfElements.json";
+        private const string _tableOfElementsFilePath = "../../../../AngryElectron/Domain/Data/TableOfElements.json";
         public TableOfElements()
         {
                 initializeTableOfElements();

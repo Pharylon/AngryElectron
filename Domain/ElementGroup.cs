@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class ElementGroup : List<IParsableSymbols>, IParsableSymbols
+    public class ElementGroup : List<IParsableSymbols>, IParsableSymbols
     {
         //ElementGroup is a grouping of Elements. It contains anything that implements IParsableSymbols - including other
         //ElementGroups. This is necessary as ElementGroup is meant to represent both a molecule and a chemical group. So an ElementGroup representing
@@ -24,9 +24,20 @@ namespace AngryElectron.Domain
             {
                 List<string> symbols = new List<string>();
                 foreach (IParsableSymbols unit in this)
-                    symbols.Union(this.ParsableSymbols).ToList();
+                    foreach (string symbol in unit.ParsableSymbols)
+                        symbols.Add(symbol);
+                if (type == "complex")
+                {
+                    symbols.Insert(0, "(");
+                    symbols.Add(")");
+                }
                 return symbols;
             }
+        }
+
+        public override string ToString()
+        {
+            return type;
         }
     }
 }
