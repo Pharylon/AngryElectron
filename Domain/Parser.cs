@@ -14,21 +14,16 @@ namespace AngryElectron.Domain
         {
             ChemicalEquation myChemicalEquation = new ChemicalEquation();
 
-            if (!validateString(reaction))
-            {
-                //Do whatever we do when the string isn't valid.
-            }
-
-            //This should take our validly formatted string and turn it int an array of strings, each one containing a symbol or operator.
+            //This should take our string and turn it int an array of strings, each one containing a symbol or operator.
             StringBuilder sb = new StringBuilder();
             foreach (char letter in reaction)
             {
-                if ((Char.IsUpper(letter) || Char.IsNumber(letter) || letter == '+' || letter == '>' || letter == '-' || letter == ')' || letter == '(') && sb.Length > 0)
+                if ((Char.IsUpper(letter) || Char.IsNumber(letter) || letter == '+' || letter == '>' || letter == ')' || letter == '(') && sb.Length > 0)
                     sb.Append(",");
-                sb.Replace(" ", "");
                 sb.Append(letter);
             }
             sb.Replace(" ", "");
+            sb.Replace("-", "");
             reaction = sb.ToString();
             string[] reactionComponents = reaction.Split(',');
 
@@ -70,36 +65,53 @@ namespace AngryElectron.Domain
                 {
                     int.TryParse(moleculeString[i + 1], out subscript);
                     if (subscript <= 0) //This indicates that the TryParse failed and set the subscript to zero
-                        subscript = 1;
+                        subscript = 1; //It needs to be set back to 1 since that's how many times the molecule will be added.
                 }
-                if (moleculeString[i] == "(")
+                if (moleculeString[i] == "(")  //If we find an opening parenthesis, we'll need to parse this as a seperate ElementGroup. Yay recursion, I guess!
                 {
                     int endBracketLoc = findClosingParen(i, moleculeString);
                     List<string> complex = new List<string>();
                     for (int n = i + 1; n < endBracketLoc; n++)
                         complex.Add(moleculeString[n]);
-                    int.TryParse(moleculeString[endBracketLoc + 1], out subscript);
+                    int.TryParse(moleculeString[endBracketLoc + 1], out subscript); //Complexes always have subscripts, so we need that.
                     while (subscript > 0)
                     {
                         molecule.Add(buildElementGroup(complex, "complex"));
                         subscript--;
                     }
-                    i = endBracketLoc;
-                    continue;
+                    i = endBracketLoc; //We've parsed everything within the parenthesis, so we need to set i to the closing paren location.
                 }
-                foreach (Element element in tableofElements)
-                    if (moleculeString[i] == element.Symbol)
-                        for (int n = 0; n < subscript; n++)
-                            molecule.Add(element);
+                else
+                {
+                    bool foundValidSymbol = false;
+                    foreach (Element element in tableofElements)   //We're going to take the moleculeString element and compare it to each
+                        if (moleculeString[i] == element.Symbol)   //element in the tableOfElements to see what element it is.
+                            while (subscript > 0)                  //Once we find the right element, it gets added to the molecule.
+                            {
+                                foundValidSymbol = true;
+                                molecule.Add(element);
+                                subscript--;
+                            }
+                    int x;  //We don't use x for anything, but TryParse() requires an out operator.
+                    if (int.TryParse(moleculeString[i], out x)) // If the symbol isn't a valid element, we check to see if it's a number
+                    {
+                        if (i == 0)
+                            throw new ArgumentException("Invalid leading number found in string: " + moleculeString[i].ToString() + moleculeString[i+1].ToString()); //Numbers shouldn't appear at the start of the equation. We're trying to balance it.
+                        else
+                            foundValidSymbol = true; //If the number is anywhere else, that's fine.
+                    }
+                    if (!foundValidSymbol)
+                        throw new ArgumentException("Invalid character found: " + moleculeString[i].ToString());
+                }
                 subscript = 1; //Reset subscript for next pass.
             }
-            if (molecule.Count == 1)
-                return molecule[0];
+            if (molecule.Count == 1)  //If the final molecule contains only a single element, there's no need to return it as a molecule
+                return molecule[0];   //Elements also now implement IParsableSymbol, so it can be returned directly.
             else
                 return molecule;
         }
 
-        private int findClosingParen(int i, List<string> moleculeString)
+        private int findClosingParen(int i, List<string> moleculeString) 
         {
             int openBrackets = 1;
             while (openBrackets > 0)
@@ -111,11 +123,6 @@ namespace AngryElectron.Domain
                     openBrackets++;
             }
             return i;
-        }
-
-        private bool validateString(string reaction)
-        {
-            return true; //Currently, no logic for this, it just says all inputs are valid.
         }
     }
 }

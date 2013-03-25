@@ -14,11 +14,40 @@ namespace Test
             IEquation myEquation;
             Parser myParser = new Parser();
             //myEquation = myParser.Parse("HCl + Na -> NaCl + H2");
+
             myEquation = myParser.Parse("CaCl2 + AgNO3 -> Ca(NO3)2 + AgCl");
+            writeEquation(myEquation);
+
+            try
+            {
+                myEquation = myParser.Parse("CaCl2 + 3AgNO3 -> Ca(NO3)2 + AgCl");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(Environment.NewLine);
+                Console.WriteLine(ex.ToString());
+            }
+
+            try
+            {
+                myEquation = myParser.Parse("CaCl2 + AgNO3 -> Caz(NO3)2 + AgCl");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(Environment.NewLine);
+                Console.WriteLine(ex.ToString());
+            }
+
+
+            Console.ReadKey();
+        }
+
+        private static void writeEquation(IEquation myEquation)
+        {
             ChemicalEquation chem = (ChemicalEquation)myEquation;
             foreach (string s in chem.ParsableSymbols)
                 Console.Write(s);
-            Console.ReadKey();
         }
+
     }
 }
