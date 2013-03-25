@@ -19,7 +19,7 @@ namespace AngryElectron.Domain
             get
             {
                 List<string> symbols = new List<string>();
-                foreach (ElementGroup molecule in Reactants)
+                foreach (IParsableSymbols molecule in Reactants)
                 {
                     foreach (string symbol in molecule.ParsableSymbols)
                         symbols.Add(symbol);
@@ -27,7 +27,7 @@ namespace AngryElectron.Domain
                 }
                 symbols.RemoveAt(symbols.Count - 1);
                 symbols.Add("->");
-                foreach (ElementGroup molecule in Products)
+                foreach (IParsableSymbols molecule in Products)
                 {
                     foreach (string symbol in molecule.ParsableSymbols)
                         symbols.Add(symbol);

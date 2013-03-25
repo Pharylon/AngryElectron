@@ -13,10 +13,30 @@ namespace Test
         {
             IEquation myEquation;
             Parser myParser = new Parser();
-            //myEquation = myParser.Parse("HCl + Na -> NaCl + H2");
 
-            myEquation = myParser.Parse("CaCl2 + AgNO3 -> Ca(NO3)2 + AgCl");
-            writeEquation(myEquation);
+            try
+            {
+                myEquation = myParser.Parse("HCl + Na -> NaCl + H2");
+                writeEquation(myEquation);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(Environment.NewLine);
+                Console.WriteLine(ex.ToString());
+            }
+
+
+            try
+            {
+                myEquation = myParser.Parse("CaCl2 + AgNO3 -> Ca(NO3)2 + AgCl");
+                writeEquation(myEquation);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(Environment.NewLine);
+                Console.WriteLine(ex.ToString());
+            }
+
 
             try
             {
@@ -27,6 +47,7 @@ namespace Test
                 Console.WriteLine(Environment.NewLine);
                 Console.WriteLine(ex.ToString());
             }
+
 
             try
             {
@@ -47,6 +68,7 @@ namespace Test
             ChemicalEquation chem = (ChemicalEquation)myEquation;
             foreach (string s in chem.ParsableSymbols)
                 Console.Write(s);
+            Console.Write(Environment.NewLine);
         }
 
     }
