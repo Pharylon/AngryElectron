@@ -10,7 +10,7 @@ namespace AngryElectron.Domain
     {
         IEquation Parse(string reaction);
 
-        //Many things besides the parser will need to implement ParsableSymbols so moved this to another interface.
+        //Many things besides the parser will need to implement ParsableSymbols so moved this to it's own interface.
         //IEnumerable<String> ParsableSymbols { get; set; }
     }
 }
