@@ -17,7 +17,17 @@ namespace Test
 
             writeParsableSymbols("CaCl2 + 3AgNO3 -> Ca(NO3)2 + AgCl");
 
-            writeParsableSymbols("CaCl2 + AgNO3 -> Caz(NO3)2 + AgCl");
+            writeParsableSymbols("CaCl2 + AgNO3 -> Ca(NxO3)2 + AgCl");
+
+            writeParsableSymbols("CH4+O2 --> CO2 +H20");
+
+            writeParsableSymbols("Na+H20 > NaOH + H + 2");
+
+            writeParsableSymbols("SiCl4 + H20 = ZnCl2+H2");
+
+            writeParsableSymbols("Al[OH]3+ H2SO4 -> Al2[SO4]3 + H20");
+
+
 
 
             Console.WriteLine(Environment.NewLine);

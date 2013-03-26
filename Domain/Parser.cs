@@ -13,6 +13,9 @@ namespace AngryElectron.Domain
         public IEquation Parse(string inputString)
         {
             ChemicalEquation myChemicalEquation = new ChemicalEquation();
+            inputString = inputString.Replace("=", ">"); //Switch common variants of the symbols to the standard ones Angry Electron expects.
+            inputString = inputString.Replace("[", "(");
+            inputString = inputString.Replace("]", ")");
 
             //This should take our string and turn it int an array of strings, each one containing a symbol or operator.
             StringBuilder sb = new StringBuilder();
@@ -39,13 +42,13 @@ namespace AngryElectron.Domain
                     if (parsingReactants)
                         myChemicalEquation.Reactants.Add(buildElementGroup(moleculeString, "molecule"));    //Once we're at the end of the molecule
                     else                                                                                    //moleculeString is sent to buildElementGroup
-                        myChemicalEquation.Products.Add(buildElementGroup(moleculeString, "molecule"));     //and the result added to the reactants or Products
-                    moleculeString = new List<string>(); //reset for the next moleculeString
+                        myChemicalEquation.Products.Add(buildElementGroup(moleculeString, "molecule"));     //and the result added to the Reactants or Products
+                    moleculeString = new List<string>(); //reset for the next loop
                     if (symbolArray[i] == ">")
                         parsingReactants = false;
                 }
                 else
-                    moleculeString.Add(symbolArray[i]);
+                    moleculeString.Add(symbolArray[i]); //If we didn't find an "end of molecule" operator, the symbol is added to moleculeString. 
             }
             myChemicalEquation.Products.Add(buildElementGroup(moleculeString, "molecule")); //The final molecule does not have an operator after it, so it has to be added "manually."
             return myChemicalEquation;
@@ -96,15 +99,17 @@ namespace AngryElectron.Domain
                     int x;  //We don't use x for anything, but TryParse() requires an out operator.
                     if (int.TryParse(moleculeString[i], out x)) // If the symbol isn't a valid element, we check to see if it's a number
                     {
-                        if (i == 0)  //Numbers shouldn't appear at the start of the molecule, since we're trying to balance it.
+                        if (i == 0 && moleculeString.Count > 1)  //Numbers shouldn't appear at the start of the molecule, since we're trying to balance it.
                             throw new ArgumentException("Parser found unexpected number at: " + moleculeString[i].ToString() + moleculeString[i+1].ToString());
+                        else if (i == 0) //This would indicate the molecule to be parsed contained only a single number.
+                            throw new ArgumentException("Parser attempted to parse number with no valid symbol attached: " + moleculeString[i].ToString());
                         else        //If the number is anywhere else, that's fine.
                             foundValidSymbol = true; 
                     }
                     if (!foundValidSymbol)
                         throw new ArgumentException("Attempted to Parse Invalid Character: " + moleculeString[i].ToString());
                 }
-                subscript = 1; //Reset subscript for next pass.
+                subscript = 1; //Reset subscript for next loop.
             }
             if (molecule.Count == 1)  //If the final molecule contains only a single element, there's no need to return it as a molecule.
                 return molecule[0];   //Elements also now implement IParsableSymbol, so it can be returned directly.
