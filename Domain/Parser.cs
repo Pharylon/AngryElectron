@@ -77,7 +77,12 @@ namespace AngryElectron.Domain
                     List<string> complex = new List<string>();
                     for (int n = i + 1; n < endBracketLoc; n++)
                         complex.Add(moleculeString[n]);
-                    int.TryParse(moleculeString[endBracketLoc + 1], out subscript); //Complexes should always have subscripts, so we need that.
+                    if (endBracketLoc < moleculeString.Count - 1) //Check to make sure the endbracket is not the last item in the list before we check it for the coeficient.
+                    {
+                        int.TryParse(moleculeString[endBracketLoc + 1], out subscript); //Now we need the complex's coeficient. Just like above
+                        if (subscript == 0)                                             //if it gets set to 0, we must reset to 1.
+                            subscript = 1;
+                    }
                     while (subscript > 0)
                     {
                         molecule.Add(buildElementGroup(complex, "complex"));
