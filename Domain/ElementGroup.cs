@@ -10,11 +10,11 @@ namespace AngryElectron.Domain
     {
         //ElementGroup is a grouping of Elements. It contains anything that implements IParsableSymbols - including other
         //ElementGroups. This is necessary as ElementGroup is meant to represent both a molecule and a complex. 
-        string type;
+        public string Type { get; private set; }
 
         public ElementGroup(string type)
         {
-            this.type = type;
+            this.Type = type;
         }
 
         public IEnumerable<string> ParsableSymbols
@@ -25,7 +25,7 @@ namespace AngryElectron.Domain
                 foreach (IParsableSymbols unit in this)
                     foreach (string symbol in unit.ParsableSymbols)
                         symbols.Add(symbol);
-                if (type == "complex")
+                if (Type == "complex")
                 {
                     symbols.Insert(0, "(");
                     symbols.Add(")");
@@ -36,7 +36,7 @@ namespace AngryElectron.Domain
 
         public override string ToString()
         {
-            return type;
+            return Type;
         }
     }
 }

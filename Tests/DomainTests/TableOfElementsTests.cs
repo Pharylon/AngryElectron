@@ -5,21 +5,6 @@ using System.Collections.Generic;
 
 namespace AngryElectron.Tests.Domain
 {
-    //[TestClass]
-    //public class ParserTests
-    //{
-    //    Parser myParser = new Parser();
-    //    ChemicalEquation myEquation;
-
-
-    //    [TestMethod]
-    //    public void TestParserSimpleString
-    //    {
-    //        myParser.P
-    //    }
-
-    //}
-
     [TestClass]
     public class TableOfElementsTests
     {

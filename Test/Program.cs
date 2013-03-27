@@ -11,6 +11,8 @@ namespace Test
     {
         static void Main(string[] args)
         {
+            writeParsableSymbols("HH -> NaNa");
+
             writeParsableSymbols("HCl + Na -> NaCl + H2");
 
             writeParsableSymbols("CaCl2 + AgNO3 -> Ca(NO3)2 + AgCl");
@@ -21,14 +23,11 @@ namespace Test
 
             writeParsableSymbols("CH4+O2 --> CO2 +H20");
 
-            writeParsableSymbols("Na+H20 > NaOH + H + 2");
+            writeParsableSymbols("Na+H20 > NaOH + 2+H");
 
             writeParsableSymbols("SiCl4 + H20 = ZnCl2+H2");
 
             writeParsableSymbols("Al[OH]3+ H2SO4 -> Al2[SO4]3 + H20");
-
-
-
 
             Console.WriteLine(Environment.NewLine);
             Console.WriteLine("Press any key to end debugging...");
@@ -39,8 +38,8 @@ namespace Test
         {
             Parser myParser = new Parser();
             IEquation myEquation = new ChemicalEquation();
-            try 
-            { 
+            try
+            {
                 myEquation = myParser.Parse(myString);
                 ChemicalEquation chem = (ChemicalEquation)myEquation;
                 foreach (string s in chem.ParsableSymbols)

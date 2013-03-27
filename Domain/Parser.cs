@@ -8,41 +8,27 @@ namespace AngryElectron.Domain
 {
     public class Parser : IParser
     {
-        TableOfElements tableofElements = new TableOfElements();
-
         public IEquation Parse(string inputString)
         {
+            string[] symbolArray = createSymbolArray(inputString);
+            ChemicalEquation myChemicalEquation = convertArrayToEquation(symbolArray);
+            return myChemicalEquation;  
+        }
+
+        private ChemicalEquation convertArrayToEquation(string[] symbolArray)
+        {
+            ElementGroupBuilder myBuilder = new ElementGroupBuilder();
             ChemicalEquation myChemicalEquation = new ChemicalEquation();
-            inputString = inputString.Replace("=", ">"); //Switch common variants of the symbols to the standard ones Angry Electron expects.
-            inputString = inputString.Replace("[", "(");
-            inputString = inputString.Replace("]", ")");
-
-            //This should take our string and turn it int an array of strings, each one containing a symbol or operator.
-            StringBuilder sb = new StringBuilder();
-            foreach (char letter in inputString)
-            {
-                if ((Char.IsUpper(letter) || Char.IsNumber(letter) || letter == '+' || letter == '>' || letter == ')' || letter == '(') && sb.Length > 0)
-                    sb.Append(",");
-                sb.Append(letter);
-            }
-            sb.Replace(" ", "");
-            sb.Replace("-", "");
-            string[] symbolArray = sb.ToString().Split(',');
-
-
-            //OK, now that we have our array of symbols, we need to break it apart into 
-            //individual molecules. Each molecule will be a List<string> called moleculeString that
-            //will then be fed into a seperate method to actually build it into a ElementGroup object.
             List<string> moleculeString = new List<string>();
             bool parsingReactants = true;
             for (int i = 0; i < symbolArray.Length; i++)
             {
-                if (symbolArray[i] == "+" || symbolArray[i] == ">")  //Finding one of these operators tells us we're at the end of a molecule.
+                if (symbolArray[i] == "+" || symbolArray[i] == ">" || symbolArray[i] == "|")  //Finding one of these operators tells us we're at the end of a molecule.
                 {
                     if (parsingReactants)
-                        myChemicalEquation.Reactants.Add(buildElementGroup(moleculeString, "molecule"));    //Once we're at the end of the molecule
-                    else                                                                                    //moleculeString is sent to buildElementGroup
-                        myChemicalEquation.Products.Add(buildElementGroup(moleculeString, "molecule"));     //and the result added to the Reactants or Products
+                        myChemicalEquation.Reactants.Add(myBuilder.buildElementGroup(moleculeString, "molecule"));
+                    else
+                        myChemicalEquation.Products.Add(myBuilder.buildElementGroup(moleculeString, "molecule"));
                     moleculeString = new List<string>(); //reset for the next loop
                     if (symbolArray[i] == ">")
                         parsingReactants = false;
@@ -50,90 +36,43 @@ namespace AngryElectron.Domain
                 else
                     moleculeString.Add(symbolArray[i]); //If we didn't find an "end of molecule" operator, the symbol is added to moleculeString. 
             }
-            myChemicalEquation.Products.Add(buildElementGroup(moleculeString, "molecule")); //The final molecule does not have an operator after it, so it has to be added "manually."
             return myChemicalEquation;
-
-            //This is some regex code I found online for seperating capital letters. It has problems, though, and I don't know regular expressions. 
-            //I may try to fix this later, though, so I'll keep it commented out here.
-            //var regex = new Regex(@"(?<=[A-Z])(?=[A-Z][a-z]) | (?<=[^A-Z])(?=[A-Z]) | (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
-            //regex.Replace(reaction, ",");   
         }
 
-        private IParsableSymbols buildElementGroup(List<string> moleculeString, string type)
+        private static string[] createSymbolArray(string inputString)
         {
-            ElementGroup molecule = new ElementGroup(type);
-            int subscript = 1;
-            for (int i = 0; i < moleculeString.Count; i++)
-            {
-                if (i < moleculeString.Count - 1)
-                {
-                    int.TryParse(moleculeString[i + 1], out subscript);
-                    if (subscript <= 0)      //This indicates that the TryParse failed and set the subscript to zero. When that happens
-                        subscript = 1;       //it needs to be set back to 1 since that's how many times the molecule will be added.
-                }
-                if (moleculeString[i] == "(")  //If we find an opening parenthesis, we'll need to parse this as a seperate ElementGroup. Yay for recursion, I guess!
-                {
-                    int endBracketLoc = findClosingParen(i, moleculeString);
-                    List<string> complex = new List<string>();
-                    for (int n = i + 1; n < endBracketLoc; n++)
-                        complex.Add(moleculeString[n]);
-                    if (endBracketLoc < moleculeString.Count - 1) //Check to make sure the endbracket is not the last item in the list before we check it for the coeficient.
-                    {
-                        int.TryParse(moleculeString[endBracketLoc + 1], out subscript); //Now we need the complex's coeficient. Just like above
-                        if (subscript == 0)                                             //if it gets set to 0, we must reset to 1.
-                            subscript = 1;
-                    }
-                    while (subscript > 0)
-                    {
-                        molecule.Add(buildElementGroup(complex, "complex"));
-                        subscript--;
-                    }
-                    i = endBracketLoc; //We've parsed everything within the parentheses, so we need to set i to the closing parenthesis location.
-                }
-                else
-                {
-                    bool foundValidSymbol = false;
-                    foreach (Element element in tableofElements)   //We're going to take the moleculeString symbol and compare it to each
-                        if (moleculeString[i] == element.Symbol)   //element symbol in the tableOfElements to see what element it is.
-                            while (subscript > 0)                  //Once we find the right element, it gets added to the molecule.
-                            {
-                                foundValidSymbol = true;
-                                molecule.Add(element);
-                                subscript--;
-                            }
-                    int x;  //We don't use x for anything, but TryParse() requires an out operator.
-                    if (int.TryParse(moleculeString[i], out x)) // If the symbol isn't a valid element, we check to see if it's a number
-                    {
-                        if (i == 0 && moleculeString.Count > 1)  //Numbers shouldn't appear at the start of the molecule, since we're trying to balance it.
-                            throw new ArgumentException("Parser found unexpected number at: " + moleculeString[i].ToString() + moleculeString[i+1].ToString());
-                        else if (i == 0) //This would indicate the molecule to be parsed contained only a single number.
-                            throw new ArgumentException("Parser attempted to parse number with no valid symbol attached: " + moleculeString[i].ToString());
-                        else        //If the number is anywhere else, that's fine.
-                            foundValidSymbol = true; 
-                    }
-                    if (!foundValidSymbol)
-                        throw new ArgumentException("Attempted to Parse Invalid Character: " + moleculeString[i].ToString());
-                }
-                subscript = 1; //Reset subscript for next loop.
-            }
-            if (molecule.Count == 1)  //If the final molecule contains only a single element, there's no need to return it as a molecule.
-                return molecule[0];   //Elements also now implement IParsableSymbol, so it can be returned directly.
-            else
-                return molecule;
+            inputString = normalizeCharacters(inputString);
+            StringBuilder commaSeperatedSymbols = generateCommaSeperatedSymbols(inputString);
+            removeUnwantedCharacters(commaSeperatedSymbols);
+            string[] symbolArray = commaSeperatedSymbols.ToString().Split(',');
+            return symbolArray;
         }
 
-        private int findClosingParen(int i, List<string> moleculeString) 
+        private static void removeUnwantedCharacters(StringBuilder commaSeperatedSymbols)
         {
-            int openBrackets = 1;
-            while (openBrackets > 0)
+            commaSeperatedSymbols.Replace(" ", "");
+            commaSeperatedSymbols.Replace("-", "");
+        }
+
+        private static StringBuilder generateCommaSeperatedSymbols(string inputString)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char letter in inputString)
             {
-                i++;
-                if (moleculeString[i] == ")")
-                    openBrackets--;
-                if (moleculeString[i] == "(")
-                    openBrackets++;
+                if ((Char.IsUpper(letter) || Char.IsNumber(letter) || letter == '+' || letter == '>' || letter == ')' || letter == '(') && sb.Length > 0)
+                    sb.Append(",");
+                sb.Append(letter);
             }
-            return i;
+            sb.Append(",|"); //Pipe is used as an "end of equation" character for the parser.
+            return sb;
+        }
+
+        private static string normalizeCharacters(string inputString)
+        {
+            inputString = inputString.Replace("=", ">");
+            inputString = inputString.Replace("[", "(");
+            inputString = inputString.Replace("]", ")");
+            return inputString;
         }
     }
 }

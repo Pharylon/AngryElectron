@@ -45,6 +45,7 @@
     <Compile Include="ChemicalEquation.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="ElementGroup.cs" />
+    <Compile Include="ElementGroupBuilder.cs" />
     <Compile Include="IEquation.cs" />
     <Compile Include="IParsableSymbols.cs" />
     <Compile Include="IParser.cs" />
