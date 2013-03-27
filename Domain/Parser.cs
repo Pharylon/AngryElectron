@@ -8,6 +8,8 @@ namespace AngryElectron.Domain
 {
     public class Parser : IParser
     {
+        ElementGroupBuilder myBuilder = new ElementGroupBuilder();
+
         public IEquation Parse(string inputString)
         {
             string[] symbolArray = createSymbolArray(inputString);
@@ -17,7 +19,6 @@ namespace AngryElectron.Domain
 
         private ChemicalEquation convertArrayToEquation(string[] symbolArray)
         {
-            ElementGroupBuilder myBuilder = new ElementGroupBuilder();
             ChemicalEquation myChemicalEquation = new ChemicalEquation();
             List<string> moleculeString = new List<string>();
             bool parsingReactants = true;
@@ -57,11 +58,19 @@ namespace AngryElectron.Domain
         private static StringBuilder generateCommaSeperatedSymbols(string inputString)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (char letter in inputString)
+            for (int i = 0; i < inputString.Length; i++)
             {
-                if ((Char.IsUpper(letter) || Char.IsNumber(letter) || letter == '+' || letter == '>' || letter == ')' || letter == '(') && sb.Length > 0)
+                if ((Char.IsUpper(inputString[i]) || inputString[i] == '+' || inputString[i] == '>' || inputString[i] == ')' || inputString[i] == '(') && sb.Length > 0)
                     sb.Append(",");
-                sb.Append(letter);
+                if (char.IsDigit(inputString[i]))
+                {
+                    if (i == 0)
+                        throw new ArgumentException("Parser encountered an error: Equations may not begin with a number");
+                    else
+                        if (!char.IsDigit(inputString[i - 1])) //Make sure this is the last digit in case of a two digit number.
+                            sb.Append(",");
+                }
+                sb.Append(inputString[i]);
             }
             sb.Append(",|"); //Pipe is used as an "end of equation" character for the parser.
             return sb;

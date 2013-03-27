@@ -47,7 +47,7 @@ namespace AngryElectron.Domain
             return null;
         }
 
-        private static void checkForErrors(List<string> stringList, int i)
+        public void checkForErrors(List<string> stringList, int i)
         {
             int x;  //We don't use x for anything, but TryParse() requires an out operator.
             if (int.TryParse(stringList[i], out x)) 

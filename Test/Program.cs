@@ -11,7 +11,7 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            writeParsableSymbols("HH -> NaNa");
+            writeParsableSymbols("2Co2 + H2O -> C6H12O6 + O2");
 
             writeParsableSymbols("HCl + Na -> NaCl + H2");
 
@@ -21,13 +21,13 @@ namespace Test
 
             writeParsableSymbols("CaCl2 + AgNO3 -> Ca(NxO3)2 + AgCl");
 
-            writeParsableSymbols("CH4+O2 --> CO2 +H20");
+            writeParsableSymbols("CH4+O2 --> CO2 +H2O");
 
-            writeParsableSymbols("Na+H20 > NaOH + 2+H");
+            writeParsableSymbols("Na+H2O > NaOH + 2+H");
 
-            writeParsableSymbols("SiCl4 + H20 = ZnCl2+H2");
+            writeParsableSymbols("SiCl4 + H2O = ZnCl2+H2");
 
-            writeParsableSymbols("Al[OH]3+ H2SO4 -> Al2[SO4]3 + H20");
+            writeParsableSymbols("Al[OH]3+ H2SO4 -> Al2[SO4]3 + H2O");
 
             Console.WriteLine(Environment.NewLine);
             Console.WriteLine("Press any key to end debugging...");
