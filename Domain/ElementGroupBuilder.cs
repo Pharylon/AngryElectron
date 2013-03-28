@@ -33,28 +33,30 @@ namespace AngryElectron.Domain
                     chemical = findNextComplex(stringList, ref i);
                 else
                     chemical = findNextElement(stringList[i]);
+
                 if (chemical == null)
                     checkForErrors(stringList, i);
                 else
                 {
                     int subscript = setSubscript(stringList, i);
-                    while (subscript > 0 && chemical != null)
+                    while (subscript > 0)
                     {
                         myElementGroup.Add(chemical);
                         subscript--;
                     }
                 }
             }
+
             if (myElementGroup.Count == 1)  //If the final molecule contains only a single element, there's no need to return it as a molecule.
                 return myElementGroup[0];   //Elements also now implement IParsableSymbol, so it can be returned directly.
             else
                 return myElementGroup;
         }
 
-        private IParsableSymbols findNextElement(string stringToCheck)
+        private IParsableSymbols findNextElement(string symbol)
         {
-            if (dictionaryOfElements.ContainsKey(stringToCheck))
-                return dictionaryOfElements[stringToCheck];
+            if (dictionaryOfElements.ContainsKey(symbol))
+                return dictionaryOfElements[symbol];
             else
                 return null;
         }
@@ -80,7 +82,7 @@ namespace AngryElectron.Domain
             for (int n = i + 1; n < endParenthesisLoc; n++)
                 complex.Add(stringList[n]);
             IParsableSymbols myComplex = buildElementGroup(complex, "complex");
-            i = endParenthesisLoc; //We've parsed everything within the parentheses, so we need to set i to the closing parenthesis location.
+            i = endParenthesisLoc; //We've added everything within the parentheses, so we need to set i to the closing parenthesis location.
             return myComplex;
         }
 
