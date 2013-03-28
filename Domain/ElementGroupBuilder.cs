@@ -8,7 +8,20 @@ namespace AngryElectron.Domain
 {
     class ElementGroupBuilder
     {
-        TableOfElements tableofElements = new TableOfElements();
+        Dictionary<string, Element> dictionaryOfElements;
+
+        public ElementGroupBuilder()
+        {
+            initializeDictionaryOfElements();
+        }
+
+        private void initializeDictionaryOfElements()
+        {
+            TableOfElements tableOfElements = new TableOfElements();
+            dictionaryOfElements = new Dictionary<string, Element>();
+            foreach (Element element in tableOfElements)
+                dictionaryOfElements.Add(element.Symbol, element);
+        }
 
         public IParsableSymbols buildElementGroup(List<string> stringList, string type)
         {
@@ -19,12 +32,17 @@ namespace AngryElectron.Domain
                 if (stringList[i] == "(") 
                     chemical = findNextComplex(stringList, ref i);
                 else
-                    chemical = findNextElement(stringList, i);
-                int subscript = setSubscript(stringList, i);
-                while (subscript > 0 && chemical != null)
+                    chemical = findNextElement(stringList[i]);
+                if (chemical == null)
+                    checkForErrors(stringList, i);
+                else
                 {
-                    myElementGroup.Add(chemical);
-                    subscript--;
+                    int subscript = setSubscript(stringList, i);
+                    while (subscript > 0 && chemical != null)
+                    {
+                        myElementGroup.Add(chemical);
+                        subscript--;
+                    }
                 }
             }
             if (myElementGroup.Count == 1)  //If the final molecule contains only a single element, there's no need to return it as a molecule.
@@ -33,18 +51,12 @@ namespace AngryElectron.Domain
                 return myElementGroup;
         }
 
-        private IParsableSymbols findNextElement(List<string> stringList, int i)
+        private IParsableSymbols findNextElement(string stringToCheck)
         {
-            bool foundValidSymbol = false;
-            foreach (Element element in tableofElements)
-                if (stringList[i] == element.Symbol)  
-                    {
-                        foundValidSymbol = true;
-                        return element;
-                    }
-            if (!foundValidSymbol)
-                checkForErrors(stringList, i);
-            return null;
+            if (dictionaryOfElements.ContainsKey(stringToCheck))
+                return dictionaryOfElements[stringToCheck];
+            else
+                return null;
         }
 
         public void checkForErrors(List<string> stringList, int i)
