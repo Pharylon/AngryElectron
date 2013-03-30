@@ -8,5 +8,7 @@ namespace AngryElectron.Domain
 {
     public interface IEquation
     {
+        IEnumerable<IParsableSymbols> Reactants { get; }
+        IEnumerable<IParsableSymbols> Products { get; }
     }
 }

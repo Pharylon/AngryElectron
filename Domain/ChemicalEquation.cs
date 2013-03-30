@@ -8,12 +8,20 @@ namespace AngryElectron.Domain
 {
     public class ChemicalEquation : IEquation, IParsableSymbols
     {
-        //ChemicalEquation will hold two lists - the Reactants and Products. Each one will be a list that implements
-        //IParsableSymbols. Therefore, list items may be an Element or an ElementGroup.
+        private ElementGroup reactants = new ElementGroup(GroupType.Reactants);
+        private ElementGroup products = new ElementGroup(GroupType.Products);
 
-        public ElementGroup Reactants = new ElementGroup("reactants");
-        public ElementGroup Products = new ElementGroup("products");
+        public IEnumerable<IParsableSymbols> Reactants { get { return reactants; } }
+        public IEnumerable<IParsableSymbols> Products { get { return products; } }
 
+        public void AddToEquation(IParsableSymbols chemical, Side side)
+        {
+            if (side == Side.Reactants)
+                reactants.Add(chemical);
+            if (side == Side.Products)
+                products.Add(chemical);
+        }
+        
         public IEnumerable<string> ParsableSymbols
         {
             get

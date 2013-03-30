@@ -23,7 +23,7 @@ namespace AngryElectron.Domain
                 dictionaryOfElements.Add(element.Symbol, element);
         }
 
-        public IParsableSymbols buildElementGroup(List<string> stringList, string type)
+        public IParsableSymbols buildElementGroup(List<string> stringList, GroupType type)
         {
             ElementGroup myElementGroup = new ElementGroup(type);
             IParsableSymbols chemical;
@@ -81,7 +81,7 @@ namespace AngryElectron.Domain
             List<string> complex = new List<string>();
             for (int n = i + 1; n < endParenthesisLoc; n++)
                 complex.Add(stringList[n]);
-            IParsableSymbols myComplex = buildElementGroup(complex, "complex");
+            IParsableSymbols myComplex = buildElementGroup(complex, GroupType.Complex);
             i = endParenthesisLoc; //We've added everything within the parentheses, so we need to set i to the closing parenthesis location.
             return myComplex;
         }
