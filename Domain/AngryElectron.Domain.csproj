@@ -47,9 +47,10 @@
     <Compile Include="ElementGroup.cs" />
     <Compile Include="ElementGroupBuilder.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="IEquation.cs" />
-    <Compile Include="IParsableSymbols.cs" />
-    <Compile Include="IParser.cs" />
+    <Compile Include="Interfaces\IBalancer.cs" />
+    <Compile Include="Interfaces\IEquation.cs" />
+    <Compile Include="Interfaces\IParsableSymbols.cs" />
+    <Compile Include="Interfaces\IParser.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TableOfElements.cs" />

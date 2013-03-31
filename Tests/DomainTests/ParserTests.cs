@@ -7,16 +7,18 @@ namespace AngryElectron.Tests.Domain
     [TestClass]
     public class ParserTests
     {
+        Parser parser;
+
         [TestInitialize]
         public void InitializeTests()
         {
-            Parser parser = new Parser();
+            parser = new Parser();
         }
         [TestMethod]
         public void ParserTest1()
         {
 
-
         }
+
     }
 }

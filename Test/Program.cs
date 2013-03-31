@@ -37,7 +37,7 @@ namespace Test
         private static void writeParsableSymbols(string myString)
         {
             Parser myParser = new Parser();
-            IEquation myEquation = new ChemicalEquation();
+            IEquation myEquation;
             try
             {
                 myEquation = myParser.Parse(myString);

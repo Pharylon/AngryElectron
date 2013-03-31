@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
+    public delegate void EquationDelegate(IParsableSymbols symbol, Side side);
+
     public class ChemicalEquation : IEquation, IParsableSymbols
     {
         private ElementGroup reactants = new ElementGroup(GroupType.Reactants);
@@ -14,7 +16,12 @@ namespace AngryElectron.Domain
         public IEnumerable<IParsableSymbols> Reactants { get { return reactants; } }
         public IEnumerable<IParsableSymbols> Products { get { return products; } }
 
-        public void AddToEquation(IParsableSymbols chemical, Side side)
+        public ChemicalEquation(ref EquationDelegate eqCallback)
+        {
+            eqCallback = AddToEquation;
+        }
+
+        private void AddToEquation(IParsableSymbols chemical, Side side)
         {
             if (side == Side.Reactants)
                 reactants.Add(chemical);
@@ -27,17 +34,17 @@ namespace AngryElectron.Domain
             get
             {
                 List<string> symbols = new List<string>();
-                foreach (IParsableSymbols chemical in Reactants)
+                foreach (IParsableSymbols reactant in Reactants)
                 {
-                    foreach (string symbol in chemical.ParsableSymbols)
+                    foreach (string symbol in reactant.ParsableSymbols)
                         symbols.Add(symbol);
                     symbols.Add("+");
                 }
                 symbols.RemoveAt(symbols.Count - 1);
                 symbols.Add("->");
-                foreach (IParsableSymbols chemical in Products)
+                foreach (IParsableSymbols product in Products)
                 {
-                    foreach (string symbol in chemical.ParsableSymbols)
+                    foreach (string symbol in product.ParsableSymbols)
                         symbols.Add(symbol);
                     symbols.Add("+");
                 }
