@@ -1,8 +1,27 @@
 ﻿@{
     ViewBag.Title = "StoichiometryCalculator";
 }
+@section styles{
+    @Styles.Render("~/Content/tagsManager")
+}
+
 
 <h2>Stoichiometry Calculator</h2>
-<h3>Coming Soon!</h3>
-<label>Reactants</label> <input type="text" name="reactants" placeholder="Reactants" class="tagManager"/>
-<label>Products</label> <input type="text" name="products" placeholder="Products" class="anotherTagManager"/>
+<div id="reaction-input" class="row-fluid">
+    <div class="span6">
+        <label>Reactants</label> <input type="text" name="reactants" placeholder="Reactants" class="tagManager"/>
+    </div>
+    <div class="span6">
+        <label>Products</label> <input type="text" name="products" placeholder="Products" class="anotherTagManager"/>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/tagsManager")
+    <script type="text/javascript">
+        $(function () {
+          $(".tagManager").tagsManager();
+          $(".anotherTagManager").tagsManager();
+        });
+    </script>
+}

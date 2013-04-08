@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AngryElectron.Domain;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace AngryElectron.Tests.Domain
 {
@@ -40,6 +41,13 @@ namespace AngryElectron.Tests.Domain
         public void TableOfElementsIsNotEmpty()
         {
             Assert.IsTrue(myElements.Count > 0);
+        }
+
+        [TestMethod]
+        public void TableOfElementsHasJsonString()
+        {
+            Assert.IsNotNull(myElements.Json);
+            Trace.Write(myElements.Json);
         }
     }
 }

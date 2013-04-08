@@ -7,33 +7,27 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <!-- Le styles -->
-    @Styles.Render("~/Content/themes/base/css", "~/Content/css")
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet">
-    <link href="~/Content/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="~/Content/bootstrap-tagmanager.css" rel="stylesheet">
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    @Styles.Render("~/Content/bootstrap")
+    @RenderSection("styles", required: false)
+
   </head>
 
-  <body>
-    @Html.Partial("_NavBar")
-    <div class="container">
-    @RenderBody()
-    </div> 
+    <body>
 
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    @Scripts.Render("~/bundles/jquery")
-    <script src="~/Scripts/bootstrap.min.js"></script>
-    <script src="~/Scripts/jquery.tagsmanager.min.js"></script>
-    @RenderSection("scripts", required: false)
-      <script type="text/javascript">
-          jQuery(".tagManager").tagsManager();
-          jQuery(".anotherTagManager").tagsManager();
-</script>
-  </body>
+        @Html.Partial("_NavBar")
+
+        <div id="main" class="container-fluid">
+            @RenderBody()
+        </div>
+
+        <div id="script-section">
+            @Scripts.Render("~/bundles/layout")
+            @RenderSection("scripts", required: false)
+            <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+            <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+        </div>
+
+    </body>
 </html>

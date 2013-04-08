@@ -16,14 +16,21 @@ namespace AngryElectron.Domain
         {
                 initializeTableOfElements();
         }
-
+        public string Json 
+        { 
+            get
+            {
+                StreamReader streamReader = new StreamReader(_tableOfElementsFilePath);
+                return streamReader.ReadToEnd().ToString();
+            }
+        }
         private void initializeTableOfElements()
         {
             StreamReader streamReader = new StreamReader(_tableOfElementsFilePath);
-            this.AddRange(JsonConvert.DeserializeObject<List<Element>>(streamReader.ReadToEnd()));
+            this.AddRange(JsonConvert.DeserializeObject<List<Element>>(Json));
             streamReader.Close();
         }
-
+        
         public void Save()
         {
             File.WriteAllText(_tableOfElementsFilePath, JsonConvert.SerializeObject(this));
