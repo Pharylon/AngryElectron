@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class Solver
+    class Controller
     {
-        public IEquation Solve(string userInput) //Once the balancer works, this will send it to through the balancer before returning it.
+        public IEquation Solve(string userInput) 
         {
             Parser myParser = new Parser();
-            IEquation myChemicalEquation =  myParser.Parse(userInput);
+            Balancer myBalancer = new Balancer();
+            IEquation myChemicalEquation;
+
+            myChemicalEquation =  myParser.Parse(userInput);
+            //myChemicalEquation = myBalancer.Balance(myChemicalEquation);  Uncomment once Balancer works.
             return myChemicalEquation;
         }
     }
