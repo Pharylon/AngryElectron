@@ -14,7 +14,11 @@ namespace AngryElectron.Domain
         private const string _tableOfElementsFilePath = @"Data\TableOfElements.json";
         public TableOfElements()
         {
-                initializeTableOfElements();
+            initializeTableOfElements(_tableOfElementsFilePath);
+        }
+        public TableOfElements(string path)
+        {
+            initializeTableOfElements(path);
         }
         public string Json 
         { 
@@ -24,9 +28,9 @@ namespace AngryElectron.Domain
                 return streamReader.ReadToEnd().ToString();
             }
         }
-        private void initializeTableOfElements()
+        private void initializeTableOfElements(string path)
         {
-            StreamReader streamReader = new StreamReader(_tableOfElementsFilePath);
+            StreamReader streamReader = new StreamReader(path);
             this.AddRange(JsonConvert.DeserializeObject<List<Element>>(Json));
             streamReader.Close();
         }
@@ -34,6 +38,10 @@ namespace AngryElectron.Domain
         public void Save()
         {
             File.WriteAllText(_tableOfElementsFilePath, JsonConvert.SerializeObject(this));
+        }
+        public string getFilePath()
+        {
+            throw new NotImplementedException();
         }
     }
 }

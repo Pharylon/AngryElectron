@@ -380,6 +380,7 @@
     <Content Include="Views\Resources\Index.cshtml" />
     <Content Include="Views\MolecularProperties\Index.cshtml" />
     <Content Include="Views\SignUp\Index.cshtml" />
+    <Content Include="Views\Shared\TableOfElements.cshtml" />
     <TypeScriptCompile Include="Scripts\moleculeSequence.ts" />
     <Content Include="Scripts\molecule-sequence.js">
       <DependentUpon>moleculeSequence.ts</DependentUpon>
@@ -408,6 +409,9 @@
       <DependentUpon>EquationParser.ts</DependentUpon>
     </Content>
     <Content Include="Scripts\element-symbols.json" />
+    <Content Include="App_Data\TableOfElements.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
@@ -460,9 +464,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Element\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config">
       <SubType>Designer</SubType>

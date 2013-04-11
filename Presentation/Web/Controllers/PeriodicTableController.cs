@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using AngryElectron.Domain;
+using System.IO;
 
 namespace AngryElectron.Presentation.Web.Controllers
 {
@@ -11,8 +12,7 @@ namespace AngryElectron.Presentation.Web.Controllers
     {
         public ActionResult Index()
         {
-            //TableOfElements theElements = new TableOfElements();
-            //return View(theElements.Json);
+            ViewBag.Json = System.IO.File.ReadAllText(Server.MapPath(@"~/App_Data/TableOfElements.json"));
             return View();
         }
 
