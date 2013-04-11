@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Balancer.cs" />
+    <Compile Include="BigIntegerExtensions.cs" />
     <Compile Include="ChemicalEquation.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="ElementGroup.cs" />
@@ -64,6 +65,9 @@
     <Compile Include="Parser\MoleculeParser.cs" />
     <Compile Include="Parser\ReactionSideParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rational.cs" />
+    <Compile Include="RationalCollectionHelpers.cs" />
+    <Compile Include="Solver.cs" />
     <Compile Include="TableOfElements.cs" />
   </ItemGroup>
   <ItemGroup>

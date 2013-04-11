@@ -11,11 +11,11 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            writeParsableSymbols("2Co2 + H2O -> C6H12O6 + O2");
+            //writeParsableSymbols("2Co2 + H2O -> C6H12O6 + O2");
 
-            writeParsableSymbols("HCl + Na -> NaCl + H2");
+            //writeParsableSymbols("HCl + Na -> NaCl + H2");
 
-            writeParsableSymbols("CaCl2 + AgNO3 -> Ca(NO3)2 + AgCl");
+            writeParsableSymbols("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
 
             writeParsableSymbols("CaCl2 + 3AgNO3 -> Ca(NO3)2 + AgCl");
 
@@ -29,6 +29,8 @@ namespace Test
 
             writeParsableSymbols("Al[OH]3+ H2SO4 -> Al2[SO4]3 + H2O");
 
+            Balancer myBalancer = new Balancer();
+
             Console.WriteLine(Environment.NewLine);
             Console.WriteLine("Press any key to end debugging...");
             Console.ReadKey();
@@ -41,10 +43,11 @@ namespace Test
             try
             {
                 myEquation = myParser.Parse(myString);
-                ChemicalEquation chem = (ChemicalEquation)myEquation;
-                foreach (string s in chem.ParsableSymbols)
+                //ChemicalEquation chem = (ChemicalEquation)myEquation;
+                foreach (string s in myEquation.ParsableSymbols)
                     Console.Write(s);
                 Console.Write(Environment.NewLine);
+                Console.WriteLine(myEquation.ToString());
             }
             catch (ArgumentException ex) { Console.WriteLine(ex.Message); }
         }

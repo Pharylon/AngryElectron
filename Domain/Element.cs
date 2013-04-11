@@ -39,7 +39,7 @@ namespace AngryElectron.Domain
 
         public override string ToString()
         {
-            return Name;
+            return Symbol;
         }
     }
 }

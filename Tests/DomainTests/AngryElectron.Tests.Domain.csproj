@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="TableOfElementsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ParserTests.cs" />
+    <Compile Include="BalancerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\AngryElectron.Domain.csproj">

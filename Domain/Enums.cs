@@ -18,5 +18,6 @@ namespace AngryElectron.Domain
         Complex,
         Reactants,
         Products,
+        ElementWrapper,
     }
 }

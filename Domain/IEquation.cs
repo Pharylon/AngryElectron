@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public interface IEquation
+    public interface IEquation : IParsableSymbols
     {
-        IEnumerable<IParsableSymbols> Reactants { get; }
-        IEnumerable<IParsableSymbols> Products { get; }
+        IParsableSymbols Reactants { get; }
+        IParsableSymbols Products { get; }
+        String ToString();
     }
 }

@@ -47,8 +47,8 @@ namespace AngryElectron.Domain
                 }
             }
 
-            if (myElementGroup.Count == 1)  //If the final molecule contains only a single element, there's no need to return it as a molecule.
-                return myElementGroup[0];   //Elements also now implement IParsableSymbol, so it can be returned directly.
+            if (myElementGroup.Count == 1)      //If the final molecule contains only a single element, return in a ElementWrapper instead of a molecule
+                return new ElementGroup(GroupType.ElementWrapper, myElementGroup[0]);
             else
                 return myElementGroup;
         }
