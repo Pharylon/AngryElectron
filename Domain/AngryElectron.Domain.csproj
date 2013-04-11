@@ -67,7 +67,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rational.cs" />
     <Compile Include="RationalCollectionHelpers.cs" />
-    <Compile Include="Solver.cs" />
+    <Compile Include="Controller.cs" />
     <Compile Include="TableOfElements.cs" />
   </ItemGroup>
   <ItemGroup>
