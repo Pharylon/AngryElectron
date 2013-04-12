@@ -13,9 +13,8 @@ namespace AngryElectron.Domain
             Parser myParser = new Parser();
             Balancer myBalancer = new Balancer();
             IEquation myChemicalEquation;
-
             myChemicalEquation =  myParser.Parse(userInput);
-            //myChemicalEquation = myBalancer.Balance(myChemicalEquation);  Uncomment once Balancer works.
+            myChemicalEquation = myBalancer.Balance(myChemicalEquation); 
             return myChemicalEquation;
         }
     }
