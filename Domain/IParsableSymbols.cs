@@ -9,5 +9,6 @@ namespace AngryElectron.Domain
     public interface IParsableSymbols
     {
         IEnumerable<String> ParsableSymbols { get; }
+        String ToHTML();
     }
 }

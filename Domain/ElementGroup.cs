@@ -81,10 +81,34 @@ namespace AngryElectron.Domain
             }
         }
 
-        private string generateStringForEquationSide(List<string> symbolList, StringBuilder sb)
+        public string ToHTML()
+        {
+            List<string> symbolList = createListOfSymbols();
+            StringBuilder sb = new StringBuilder();
+            switch (this.type)
+            {
+                case GroupType.Molecule:
+                    return generateStringForMolecule(symbolList, sb, "html");
+                case GroupType.Complex:
+                    return createComplexStringSymbol(symbolList, sb, "html");
+                case GroupType.ElementWrapper:
+                    return symbolList[0];
+                case GroupType.Products:
+                    return generateStringForEquationSide(symbolList, sb, "html");
+                case GroupType.Reactants:
+                    return generateStringForEquationSide(symbolList, sb, "html");
+                default:
+                    throw new InvalidOperationException("ElementGroup Was Not A Recognized Type");
+            }
+        }
+
+        private string generateStringForEquationSide(List<string> symbolList, StringBuilder sb, string format = "toString")
         {
             for (int i = 0; i < this.Count; i++)
             {
+                if (format == "html")
+                    sb.Append(this[i].ToHTML());
+                else
                 sb.Append(this[i].ToString());
                 if (i != this.Count - 1)
                     sb.Append("+");
@@ -92,7 +116,7 @@ namespace AngryElectron.Domain
             return sb.ToString();
         }
 
-        private string generateStringForMolecule(List<string> symbolList, StringBuilder sb)
+        private string generateStringForMolecule(List<string> symbolList, StringBuilder sb, string format = "toString")
         {
             if (Coefficient > 1)
                 sb.Append(Coefficient);
@@ -102,12 +126,18 @@ namespace AngryElectron.Domain
                 sb.Append(symbol);
                 int symbolCount = this.stringCount(symbol);
                 if (symbolCount > 1)
+                {
+                    if (format == "html")
+                        sb.Append("<sub>");
                     sb.Append(symbolCount);
+                    if (format == "html")
+                        sb.Append("</sub>");
+                }
             }
             return sb.ToString();
         }
 
-        private string createComplexStringSymbol(List<string> symbolList, StringBuilder sb)
+        private string createComplexStringSymbol(List<string> symbolList, StringBuilder sb, string format = "toString")
         {
             symbolList = generateUniqueParsableSymbols();
             foreach (string symbol in symbolList)
@@ -115,7 +145,13 @@ namespace AngryElectron.Domain
                 sb.Append(symbol);
                 int symbolCount = this.stringCount(symbol);
                 if (symbolCount > 1)
+                {
+                    if (format == "html")
+                        sb.Append("<sub>");
                     sb.Append(symbolCount);
+                    if (format == "html")
+                        sb.Append("</sub>");
+                }
             }
             return sb.ToString();
         }

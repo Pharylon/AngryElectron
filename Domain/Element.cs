@@ -41,5 +41,10 @@ namespace AngryElectron.Domain
         {
             return Symbol;
         }
+
+        public string ToHTML()
+        {
+            return Symbol;
+        }
     }
 }

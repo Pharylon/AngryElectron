@@ -62,5 +62,14 @@ namespace AngryElectron.Domain
             sb.Append(Products.ToString());
             return sb.ToString();
         }
+
+        public string ToHTML()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(Reactants.ToHTML());
+            sb.Append(" -> ");
+            sb.Append(Products.ToHTML());
+            return sb.ToString();
+        }
     }
 }

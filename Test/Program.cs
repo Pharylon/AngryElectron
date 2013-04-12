@@ -47,7 +47,8 @@ namespace Test
                 foreach (string s in myEquation.ParsableSymbols)
                     Console.Write(s);
                 Console.Write(Environment.NewLine);
-                Console.WriteLine(myEquation.ToString());
+                string x = myEquation.ToHTML();
+                Console.WriteLine(x);
             }
             catch (ArgumentException ex) { Console.WriteLine(ex.Message); }
         }
