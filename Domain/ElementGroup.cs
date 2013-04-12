@@ -11,16 +11,54 @@ namespace AngryElectron.Domain
         private GroupType type;
         public GroupType Type { get { return type; } }
         public int Coefficient = 1;
+        Dictionary<string, int> subscriptCount = new Dictionary<string,int>();
 
-        public ElementGroup(GroupType type, int coefficient = 1)
-        {
-            this.type = type;
+        public List<string> ListOfContents 
+        { 
+            get 
+            {
+                if (this.type == GroupType.Products || this.type == GroupType.Reactants)
+                {
+                    List<string> contents = new List<string>();
+                    foreach (IParsableSymbols unit in this)
+                        contents = contents.Union(unit.ListOfContents).ToList();
+                    return contents;
+                }
+                else
+                    return new List<string>(subscriptCount.Keys); 
+            } 
         }
 
         public ElementGroup(GroupType type, IParsableSymbols element, int coefficient = 1)
         {
             this.type = type;
             this.Add(element);
+        }
+
+        public ElementGroup(GroupType type, int coefficient = 1)
+        {
+            this.type = type;
+        }
+
+        public new void Add(IParsableSymbols itemToAdd)
+        {
+            base.Add(itemToAdd);
+
+            foreach (string s in itemToAdd.ListOfContents)
+            {
+                if (!subscriptCount.ContainsKey(itemToAdd.ToString()))
+                    subscriptCount.Add(itemToAdd.ToString(), itemToAdd.GetSubscriptCount(s));
+                else
+                    subscriptCount[itemToAdd.ToString()] += itemToAdd.GetSubscriptCount(s);
+            }
+        }
+
+        public int GetSubscriptCount(string key)
+        {
+            if (subscriptCount.ContainsKey(key))
+                return subscriptCount[key];
+            else
+                return 0;
         }
 
         public IEnumerable<string> ParsableSymbols
@@ -46,36 +84,27 @@ namespace AngryElectron.Domain
             return symbols;
         }
 
-        
-
-        private int stringCount(string symbol)
-        {
-            int count = 0;
-            foreach (IParsableSymbols unit in this)
-            {
-                string unitToString = unit.ToString();
-                if (unitToString == symbol)
-                    count++;
-            }
-            return count;
-        }
-
         public override string ToString()
         {
-            List<string> symbolList = createListOfSymbols();
             StringBuilder sb = new StringBuilder();
             switch (this.type)
             {
                 case GroupType.Molecule:
-                    return generateStringForMolecule(symbolList, sb);
+                    if (Coefficient > 1)
+                        sb.Append(Coefficient);
+                    sb.Append(generateStringWithCoefficients());
+                    return sb.ToString();
                 case GroupType.Complex:
-                    return createComplexStringSymbol(symbolList, sb);
+                    sb.Append("(");
+                    sb.Append(generateStringWithCoefficients());
+                    sb.Append(")");
+                    return sb.ToString();
                 case GroupType.ElementWrapper:
-                    return symbolList[0];
+                    return this[0].ToString();
                 case GroupType.Products:
-                    return generateStringForEquationSide(symbolList, sb);
+                    return generateStringForEquationSide();
                 case GroupType.Reactants:
-                    return generateStringForEquationSide(symbolList, sb);
+                    return generateStringForEquationSide();
                 default:
                     throw new InvalidOperationException("ElementGroup Was Not A Recognized Type");
             }
@@ -83,32 +112,35 @@ namespace AngryElectron.Domain
 
         public string ToHTML()
         {
-            List<string> symbolList = createListOfSymbols();
             StringBuilder sb = new StringBuilder();
             switch (this.type)
             {
                 case GroupType.Molecule:
-                    return generateStringForMolecule(symbolList, sb, "html");
+                    if (Coefficient > 1)
+                        sb.Append(Coefficient);
+                    sb.Append(generateHTMLWithCoefficients());
+                    return sb.ToString();
                 case GroupType.Complex:
-                    return createComplexStringSymbol(symbolList, sb, "html");
+                    sb.Append("(");
+                    sb.Append(generateHTMLWithCoefficients());
+                    sb.Append(")");
+                    return sb.ToString();
                 case GroupType.ElementWrapper:
-                    return symbolList[0];
+                    return this[0].ToString();
                 case GroupType.Products:
-                    return generateStringForEquationSide(symbolList, sb, "html");
+                    return generateHTMLForEquationSide();
                 case GroupType.Reactants:
-                    return generateStringForEquationSide(symbolList, sb, "html");
+                    return generateHTMLForEquationSide();
                 default:
                     throw new InvalidOperationException("ElementGroup Was Not A Recognized Type");
             }
         }
 
-        private string generateStringForEquationSide(List<string> symbolList, StringBuilder sb, string format = "toString")
+        private string generateStringForEquationSide()
         {
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < this.Count; i++)
             {
-                if (format == "html")
-                    sb.Append(this[i].ToHTML());
-                else
                 sb.Append(this[i].ToString());
                 if (i != this.Count - 1)
                     sb.Append("+");
@@ -116,62 +148,50 @@ namespace AngryElectron.Domain
             return sb.ToString();
         }
 
-        private string generateStringForMolecule(List<string> symbolList, StringBuilder sb, string format = "toString")
+        private string generateStringWithCoefficients()
         {
-            if (Coefficient > 1)
-                sb.Append(Coefficient);
-            List<string> uniqueSymbols = generateUniqueString();
-            foreach (string symbol in uniqueSymbols)
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, int> pair in subscriptCount)
             {
-                sb.Append(symbol);
-                int symbolCount = this.stringCount(symbol);
-                if (symbolCount > 1)
-                {
-                    if (format == "html")
-                        sb.Append("<sub>");
-                    sb.Append(symbolCount);
-                    if (format == "html")
-                        sb.Append("</sub>");
-                }
+                if (pair.Value == 1)
+                    sb.Append(pair.Key.ToString());
+                else
+                    sb.Append(pair.Key.ToString() + pair.Value.ToString());
             }
             return sb.ToString();
         }
 
-        private string createComplexStringSymbol(List<string> symbolList, StringBuilder sb, string format = "toString")
+        private string generateHTMLForEquationSide()
         {
-            symbolList = generateUniqueParsableSymbols();
-            foreach (string symbol in symbolList)
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < this.Count; i++)
             {
-                sb.Append(symbol);
-                int symbolCount = this.stringCount(symbol);
-                if (symbolCount > 1)
-                {
-                    if (format == "html")
-                        sb.Append("<sub>");
-                    sb.Append(symbolCount);
-                    if (format == "html")
-                        sb.Append("</sub>");
-                }
+                sb.Append(this[i].ToHTML());
+                if (i != this.Count - 1)
+                    sb.Append("+");
             }
             return sb.ToString();
         }
 
-        private List<string> generateUniqueString()
+        private string generateHTMLWithCoefficients()
         {
-            List<string> uniqueSymbols = new List<string>();
-            foreach (IParsableSymbols unit in this)
-                if (!uniqueSymbols.Contains(unit.ToString()))
-                    uniqueSymbols.Add(unit.ToString());
-            return uniqueSymbols;
-        }
-
-        public List<string> generateUniqueParsableSymbols()
-        {
-            List<string> uniqueSymbols = new List<string>();
-            foreach (string symbol in this.ParsableSymbols)
-                if (!uniqueSymbols.Contains(symbol))
-                    uniqueSymbols.Add(symbol);
-            return uniqueSymbols;
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, int> pair in subscriptCount)
+            {
+                if (pair.Value == 1)
+                    sb.Append(pair.Key.ToString());
+                else
+                    sb.Append(pair.Key.ToString() + pair.Value.ToString());
+            }
+            for (int i = sb.Length - 1; i >= 0; i--)
+            {
+                if (Char.IsDigit(sb[i]))
+                {
+                    sb.Insert(i + 1, "</sub>");
+                    sb.Insert(i, "<sub>");           
+                }
+            }
+            return sb.ToString();
         }
     }
 }

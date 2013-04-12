@@ -16,6 +16,19 @@ namespace AngryElectron.Domain
         public IParsableSymbols Reactants { get { return reactants; } }
         public IParsableSymbols Products { get { return products; } }
 
+        public int MoleculeCount { get { return reactants.Count + products.Count; } }
+        public int ReactantCount { get { return reactants.Count; } }
+        public int ProductCount { get { return products.Count; } }
+
+        public List<string> ListOfContents
+        {
+            get
+            {
+                List<string> content = reactants.ListOfContents.Union(products.ListOfContents).ToList();
+                return content;
+            }
+        }
+
         public ChemicalEquation(ref EquationDelegate eqCallback)
         {
             eqCallback = AddToEquation;
@@ -70,6 +83,11 @@ namespace AngryElectron.Domain
             sb.Append(" -> ");
             sb.Append(Products.ToHTML());
             return sb.ToString();
+        }
+
+        public int GetSubscriptCount(string key)
+        {
+            return products.GetSubscriptCount(key) + reactants.GetSubscriptCount(key);
         }
     }
 }

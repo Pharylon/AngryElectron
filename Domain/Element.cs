@@ -46,5 +46,16 @@ namespace AngryElectron.Domain
         {
             return Symbol;
         }
+
+
+        public List<string> ListOfContents
+        {
+            get { return new List<string>() { Symbol}; }
+        }
+
+        public int GetSubscriptCount(string key)
+        {
+            return 1;
+        }
     }
 }

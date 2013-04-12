@@ -11,23 +11,28 @@ namespace Test
     {
         static void Main(string[] args)
         {
+            //writeBalancedEquation("Na2CO3 + HCl -> NaCl + H2O + CO2");
+            writeBalancedEquation("K4Fe(CN)6 + H2SO4 + H2O = K2SO4 + FeSO4 + (NH4)2SO4 + CO");
+            writeBalancedEquation("SnO2 + H2 -> Sn + H2O");
+            //writeBalancedEquation("KMnO4 + HCl = KCl + MnCl2 + H2O + Cl2");
+
             //writeParsableSymbols("2Co2 + H2O -> C6H12O6 + O2");
 
             //writeParsableSymbols("HCl + Na -> NaCl + H2");
 
-            writeParsableSymbols("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
+            //writeParsableSymbols("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
 
-            writeParsableSymbols("CaCl2 + 3AgNO3 -> Ca(NO3)2 + AgCl");
+            //writeParsableSymbols("CaCl2 + 3AgNO3 -> Ca(NO3)2 + AgCl");
 
-            writeParsableSymbols("CaCl2 + AgNO3 -> Ca(NxO3)2 + AgCl");
+            //writeParsableSymbols("CaCl2 + AgNO3 -> Ca(NxO3)2 + AgCl");
 
-            writeParsableSymbols("CH4+O2 --> CO2 +H2O");
+            //writeParsableSymbols("CH4+O2 --> CO2 +H2O");
 
-            writeParsableSymbols("Na+H2O > NaOH + 2+H");
+            //writeParsableSymbols("Na+H2O > NaOH + 2+H");
 
-            writeParsableSymbols("SiCl4 + H2O = ZnCl2+H2");
+            //writeParsableSymbols("SiCl4 + H2O = ZnCl2+H2");
 
-            writeParsableSymbols("Al[OH]3+ H2SO4 -> Al2[SO4]3 + H2O");
+            //writeParsableSymbols("Al[OH]3+ H2SO4 -> Al2[SO4]3 + H2O");
 
             Balancer myBalancer = new Balancer();
 
@@ -47,10 +52,24 @@ namespace Test
                 foreach (string s in myEquation.ParsableSymbols)
                     Console.Write(s);
                 Console.Write(Environment.NewLine);
-                string x = myEquation.ToHTML();
-                Console.WriteLine(x);
             }
             catch (ArgumentException ex) { Console.WriteLine(ex.Message); }
+        }
+
+        private static void writeBalancedEquation(string myString)
+        {
+            Parser myParser = new Parser();
+            Balancer myBalancer = new Balancer();
+            IEquation myEquation;
+            //try
+            //{
+                myEquation = myParser.Parse(myString);
+                myEquation = myBalancer.Balance(myEquation);
+                Console.WriteLine(myEquation.ToString());
+                Console.WriteLine(myEquation.ToHTML());
+                Console.Write(Environment.NewLine);
+            //}
+            //catch (ArgumentException ex) { Console.WriteLine(ex.Message); }
         }
     }
 }

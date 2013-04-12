@@ -9,6 +9,8 @@ namespace AngryElectron.Domain
     public interface IParsableSymbols
     {
         IEnumerable<String> ParsableSymbols { get; }
+        List<String> ListOfContents { get; }
+        int GetSubscriptCount(string key);
         String ToHTML();
     }
 }

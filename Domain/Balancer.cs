@@ -13,53 +13,140 @@ namespace AngryElectron.Domain
 {
     public class Balancer : IBalancer
     {
-        public IEquation Balance(IEquation unbalancedEquation)
+        public IEquation Balance(IEquation myEquation)
         {
-            List<string> listOfSymbols = generateListOfSymobols(unbalancedEquation);
-            checkForValidEquation(listOfSymbols, unbalancedEquation);
-            DenseMatrix subscriptMatrix = buildMatrix(listOfSymbols, unbalancedEquation);
-            DenseVector subscriptVector = buildVector(listOfSymbols, unbalancedEquation);
-            List<int> answers = solveMatrix(subscriptMatrix, subscriptVector);
-            ChemicalEquation myEquation = addCoefficients(answers, unbalancedEquation);
+            checkForValidEquation(myEquation);
+            List<int> coefficients = solveMatrix(myEquation);
+            addCoefficients(coefficients, myEquation);
             return myEquation;
         }
 
-        private ChemicalEquation addCoefficients(List<int> answers, IEquation unbalancedEquation)
+        private void addCoefficients(List<int> answers, IEquation unbalancedEquation)
         {
-            throw new NotImplementedException();
+            ElementGroup reactants = (ElementGroup)unbalancedEquation.Reactants;
+            ElementGroup products = (ElementGroup)unbalancedEquation.Products;
+            ElementGroup currentMolecule;
+            for (int i = 0; i < unbalancedEquation.MoleculeCount; i++)
+            {
+                if (i < reactants.Count)
+                    currentMolecule = (ElementGroup)reactants[i];
+                else
+                    currentMolecule = (ElementGroup)products[i - reactants.Count];
+                currentMolecule.Coefficient = answers[i];
+            }
         }
 
-        private List<int> solveMatrix(DenseMatrix subscriptMatrix, DenseVector subscriptVector)
+        private List<int> solveMatrix(IEquation unbalancedEquation)
         {
-            throw new NotImplementedException();
+            DenseMatrix unsolvedMatrix = buildMatrix(unbalancedEquation);
+            DenseVector vector = buildVector(unbalancedEquation);
+            List<double> answers = new List<double>();
+            var matrixAnswers = unsolvedMatrix.QR().Solve(vector);
+            foreach (double d in matrixAnswers)
+                answers.Add(d);
+            answers.Add(solveForZ(unsolvedMatrix, vector, matrixAnswers));
+            List<int> coefficients = convertAnswersToIntegers(answers);
+            return coefficients;
         }
 
-        private DenseVector buildVector(List<string> listOfSymbols, IEquation unbalancedEquation)
+        private List<int> convertAnswersToIntegers(List<double> answers)
         {
-            throw new NotImplementedException();
+            List<int> coefficients = new List<int>();
+            bool integersSolved = false;
+            int numberToMultiplyBy = 1;
+            while (!integersSolved || numberToMultiplyBy < 1000)
+            {
+                List<double> checkList = new List<double>(answers);
+                for (int i = 0; i < checkList.Count; i++)
+                {
+                    checkList[i] *= numberToMultiplyBy;
+                    checkList[i] = Math.Round(checkList[i], 10);
+                }
+                bool allIntegers = true;
+                foreach (double d in checkList)
+                    if (d % 1 != 0)
+                    {
+                        allIntegers = false;
+                        break;
+                    }
+
+                if (allIntegers)
+                {
+                    foreach (double d in checkList)
+                        coefficients.Add((int)d);
+                    return coefficients;
+                }
+                numberToMultiplyBy++;
+
+            }
+            throw new ArgumentException("Error: Could not determine integer values of coefficients");
         }
 
-        private DenseMatrix buildMatrix(List<string> listOfSymbols, IEquation unbalancedEquation)
+        private static double solveForZ(DenseMatrix unsolvedMatrix, DenseVector vector, MathNet.Numerics.LinearAlgebra.Generic.Vector<double> matrixAnswers)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < vector.Count; i++)
+            {
+                if (vector[i] != 0)
+                {
+                    double answer = 0;
+                    for (int n = 0; n < unsolvedMatrix.ColumnCount; n++)
+                    {
+                        double matrixNumber = unsolvedMatrix[i, n];
+                        double multipliedBy = matrixAnswers[n];
+                        answer += matrixNumber * multipliedBy;
+                    }
+                    answer /= vector[i];
+                    return answer;
+                }
+            }
+            throw new ArgumentException("Could not solve for z");
         }
 
-        public void checkForValidEquation(List<string> listOfSymbols, IEquation unbalancedEquation)
+        private DenseVector buildVector(IEquation unbalancedEquation)
         {
-            foreach (string symbol in listOfSymbols)
-                if (!unbalancedEquation.Products.ParsableSymbols.Contains(symbol) || unbalancedEquation.Reactants.ParsableSymbols.Contains(symbol))
-                    throw new ArgumentException("Equation contains an element or complex on one side of the equation, but not on the other");       
+            ElementGroup products = (ElementGroup)unbalancedEquation.Products;
+            ElementGroup lastMolecule = (ElementGroup)products[products.Count - 1];
+            DenseVector vector = new DenseVector(unbalancedEquation.ListOfContents.Count);
+            for (int i = 0; i < unbalancedEquation.ListOfContents.Count; i++)
+            {
+                vector[i] = lastMolecule.GetSubscriptCount(unbalancedEquation.ListOfContents[i]);
+            }
+            return vector;
         }
 
-        public List<string> generateListOfSymobols(IEquation unbalancedEquation)
+        private DenseMatrix buildMatrix(IEquation unbalancedEquation)
         {
-            List<string> uniqueSymbols = new List<string>();
-            foreach (string symbol in unbalancedEquation.ParsableSymbols)
-                if (!uniqueSymbols.Contains(symbol))
-                    uniqueSymbols.Add(symbol);
-            uniqueSymbols.Remove("+");
-            uniqueSymbols.Remove("->");
-            return uniqueSymbols;
+            List<string> listOfSymbols = unbalancedEquation.ListOfContents;
+            ElementGroup reactants = (ElementGroup)unbalancedEquation.Reactants;
+            ElementGroup products = (ElementGroup)unbalancedEquation.Products;
+            ElementGroup currentMolecule;
+            DenseMatrix myMatrix = new DenseMatrix(listOfSymbols.Count, unbalancedEquation.MoleculeCount - 1);
+            for (int column = 0; column < unbalancedEquation.MoleculeCount - 1; column++)
+            {
+                for (int row = 0; row < listOfSymbols.Count; row++)
+                {
+                    if (column < reactants.Count)
+                    {
+                        currentMolecule = (ElementGroup)reactants[column];
+                        myMatrix[row, column] = currentMolecule.GetSubscriptCount(listOfSymbols[row]);
+                    }
+                    else
+                    {
+                        currentMolecule = (ElementGroup)products[column - reactants.Count];
+                        myMatrix[row, column] = (currentMolecule.GetSubscriptCount(listOfSymbols[row]) * -1);
+                    }
+                }
+            }
+            return myMatrix;
+        }
+
+        private void checkForValidEquation(IEquation unbalancedEquation)
+        {
+            foreach (string s in unbalancedEquation.ListOfContents)
+            {
+                if (!unbalancedEquation.Products.ListOfContents.Contains(s) || !unbalancedEquation.Reactants.ListOfContents.Contains(s))
+                    throw new ArgumentException("Error: the element or complex " + s + " could not be found on both sides of the equation");
+            }
         }
     }
 }
