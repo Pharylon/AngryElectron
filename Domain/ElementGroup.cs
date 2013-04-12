@@ -11,22 +11,23 @@ namespace AngryElectron.Domain
         private GroupType type;
         public GroupType Type { get { return type; } }
         public int Coefficient = 1;
-        Dictionary<string, int> subscriptCount = new Dictionary<string,int>();
+        Dictionary<string, int> listOfContents = new Dictionary<string, int>();
+        Dictionary<string, int> subscriptCount = new Dictionary<string, int>();
 
-        public List<string> ListOfContents 
+        public List<string> ListOfElements 
         { 
             get 
             {
-                if (this.type == GroupType.Products || this.type == GroupType.Reactants)
-                {
-                    List<string> contents = new List<string>();
-                    foreach (IParsableSymbols unit in this)
-                        contents = contents.Union(unit.ListOfContents).ToList();
-                    return contents;
-                }
-                else
-                    return new List<string>(subscriptCount.Keys); 
+                return new List<string>(subscriptCount.Keys); 
             } 
+        }
+
+        public List<string> ListOfContents
+        {
+            get
+            {
+                return new List<string>(subscriptCount.Keys); 
+            }
         }
 
         public ElementGroup(GroupType type, IParsableSymbols element, int coefficient = 1)
@@ -44,13 +45,18 @@ namespace AngryElectron.Domain
         {
             base.Add(itemToAdd);
 
-            foreach (string s in itemToAdd.ListOfContents)
+            foreach (string s in itemToAdd.ListOfElements)
             {
-                if (!subscriptCount.ContainsKey(itemToAdd.ToString()))
-                    subscriptCount.Add(itemToAdd.ToString(), itemToAdd.GetSubscriptCount(s));
+                if (!subscriptCount.ContainsKey(s))
+                    subscriptCount.Add(s, itemToAdd.GetSubscriptCount(s));
                 else
-                    subscriptCount[itemToAdd.ToString()] += itemToAdd.GetSubscriptCount(s);
+                    subscriptCount[s] += itemToAdd.GetSubscriptCount(s);
             }
+
+            if (!listOfContents.ContainsKey(itemToAdd.ToString()))
+                listOfContents.Add(itemToAdd.ToString(), 1);
+            else
+                listOfContents[itemToAdd.ToString()]++;
         }
 
         public int GetSubscriptCount(string key)
@@ -151,7 +157,7 @@ namespace AngryElectron.Domain
         private string generateStringWithCoefficients()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (KeyValuePair<string, int> pair in subscriptCount)
+            foreach (KeyValuePair<string, int> pair in listOfContents)
             {
                 if (pair.Value == 1)
                     sb.Append(pair.Key.ToString());
@@ -176,7 +182,7 @@ namespace AngryElectron.Domain
         private string generateHTMLWithCoefficients()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (KeyValuePair<string, int> pair in subscriptCount)
+            foreach (KeyValuePair<string, int> pair in listOfContents)
             {
                 if (pair.Value == 1)
                     sb.Append(pair.Key.ToString());

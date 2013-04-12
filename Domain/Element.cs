@@ -48,7 +48,7 @@ namespace AngryElectron.Domain
         }
 
 
-        public List<string> ListOfContents
+        public List<string> ListOfElements
         {
             get { return new List<string>() { Symbol}; }
         }

@@ -106,17 +106,17 @@ namespace AngryElectron.Domain
         {
             ElementGroup products = (ElementGroup)unbalancedEquation.Products;
             ElementGroup lastMolecule = (ElementGroup)products[products.Count - 1];
-            DenseVector vector = new DenseVector(unbalancedEquation.ListOfContents.Count);
-            for (int i = 0; i < unbalancedEquation.ListOfContents.Count; i++)
+            DenseVector vector = new DenseVector(unbalancedEquation.ListOfElements.Count);
+            for (int i = 0; i < unbalancedEquation.ListOfElements.Count; i++)
             {
-                vector[i] = lastMolecule.GetSubscriptCount(unbalancedEquation.ListOfContents[i]);
+                vector[i] = lastMolecule.GetSubscriptCount(unbalancedEquation.ListOfElements[i]);
             }
             return vector;
         }
 
         private DenseMatrix buildMatrix(IEquation unbalancedEquation)
         {
-            List<string> listOfSymbols = unbalancedEquation.ListOfContents;
+            List<string> listOfSymbols = unbalancedEquation.ListOfElements;
             ElementGroup reactants = (ElementGroup)unbalancedEquation.Reactants;
             ElementGroup products = (ElementGroup)unbalancedEquation.Products;
             ElementGroup currentMolecule;
@@ -142,9 +142,9 @@ namespace AngryElectron.Domain
 
         private void checkForValidEquation(IEquation unbalancedEquation)
         {
-            foreach (string s in unbalancedEquation.ListOfContents)
+            foreach (string s in unbalancedEquation.ListOfElements)
             {
-                if (!unbalancedEquation.Products.ListOfContents.Contains(s) || !unbalancedEquation.Reactants.ListOfContents.Contains(s))
+                if (!unbalancedEquation.Products.ListOfElements.Contains(s) || !unbalancedEquation.Reactants.ListOfElements.Contains(s))
                     throw new ArgumentException("Error: the element or complex " + s + " could not be found on both sides of the equation");
             }
         }

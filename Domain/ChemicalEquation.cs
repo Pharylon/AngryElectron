@@ -20,11 +20,11 @@ namespace AngryElectron.Domain
         public int ReactantCount { get { return reactants.Count; } }
         public int ProductCount { get { return products.Count; } }
 
-        public List<string> ListOfContents
+        public List<string> ListOfElements
         {
             get
             {
-                List<string> content = reactants.ListOfContents.Union(products.ListOfContents).ToList();
+                List<string> content = reactants.ListOfElements.Union(products.ListOfElements).ToList();
                 return content;
             }
         }
