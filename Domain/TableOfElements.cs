@@ -16,6 +16,7 @@ namespace AngryElectron.Domain
         {
             initializeTableOfElements(_tableOfElementsFilePath);
         }
+
         public TableOfElements(string path)
         {
             initializeTableOfElements(path);

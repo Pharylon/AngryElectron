@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.LinearAlgebra.Double.Solvers;
 using MathNet.Numerics.LinearAlgebra.Double.Factorization;
-using Mathematics.RationalNumbers;
 using System.Numerics;
 
 namespace AngryElectron.Domain
@@ -18,20 +17,34 @@ namespace AngryElectron.Domain
             checkForValidEquation(myEquation);
             List<int> coefficients = solveMatrix(myEquation);
             addCoefficients(coefficients, myEquation);
-            return myEquation;
+            if (finalSanityCheck(myEquation))
+                return myEquation;
+            else
+                throw new ApplicationException ("Error: The balancer failed to balance the equation!");
+        }
+
+        private bool finalSanityCheck(IEquation myEquation)
+        {
+            //ElementGroup reactants = (ElementGroup)myEquation.Reactants;
+            //ElementGroup products = (ElementGroup)myEquation.Products;
+            //List<string> listOfSymbols = myEquation.ListOfElements;
+            //foreach (string symbol in listOfSymbols)
+            //    if (reactants.GetDeepElementCount(symbol) != products.GetDeepElementCount(symbol))
+            //        return false;
+            return true;
         }
 
         private void addCoefficients(List<int> answers, IEquation unbalancedEquation)
         {
             ElementGroup reactants = (ElementGroup)unbalancedEquation.Reactants;
             ElementGroup products = (ElementGroup)unbalancedEquation.Products;
-            ElementGroup currentMolecule;
+            Molecule currentMolecule;
             for (int i = 0; i < unbalancedEquation.MoleculeCount; i++)
             {
                 if (i < reactants.Count)
-                    currentMolecule = (ElementGroup)reactants[i];
+                    currentMolecule = (Molecule)reactants[i];
                 else
-                    currentMolecule = (ElementGroup)products[i - reactants.Count];
+                    currentMolecule = (Molecule)products[i - reactants.Count];
                 currentMolecule.Coefficient = answers[i];
             }
         }
@@ -52,34 +65,40 @@ namespace AngryElectron.Domain
         private List<int> convertAnswersToIntegers(List<double> answers)
         {
             List<int> coefficients = new List<int>();
-            bool integersSolved = false;
             int numberToMultiplyBy = 1;
-            while (!integersSolved || numberToMultiplyBy < 1000)
+            while (numberToMultiplyBy < 10000)
             {
-                List<double> checkList = new List<double>(answers);
-                for (int i = 0; i < checkList.Count; i++)
-                {
-                    checkList[i] *= numberToMultiplyBy;
-                    checkList[i] = Math.Round(checkList[i], 10);
-                }
-                bool allIntegers = true;
-                foreach (double d in checkList)
-                    if (d % 1 != 0)
-                    {
-                        allIntegers = false;
-                        break;
-                    }
+                List<double> checkList = multiplyAnswers(answers, numberToMultiplyBy);
 
-                if (allIntegers)
+                if (checkAllAnswersAreIntegers(ref checkList))
                 {
                     foreach (double d in checkList)
                         coefficients.Add((int)d);
                     return coefficients;
                 }
-                numberToMultiplyBy++;
-
+                else
+                    numberToMultiplyBy++;
             }
             throw new ArgumentException("Error: Could not determine integer values of coefficients");
+        }
+
+        private static List<double> multiplyAnswers(List<double> answers, int numberToMultiplyBy)
+        {
+            List<double> checkList = new List<double>(answers);
+            for (int i = 0; i < checkList.Count; i++)
+            {
+                checkList[i] *= numberToMultiplyBy;
+                checkList[i] = Math.Round(checkList[i], 10);
+            }
+            return checkList;
+        }
+
+        private bool checkAllAnswersAreIntegers(ref List<double> checkList)
+        {
+            foreach (double d in checkList)
+                if (d % 1 != 0)
+                    return false;
+            return true;
         }
 
         private static double solveForZ(DenseMatrix unsolvedMatrix, DenseVector vector, MathNet.Numerics.LinearAlgebra.Generic.Vector<double> matrixAnswers)
@@ -109,7 +128,7 @@ namespace AngryElectron.Domain
             DenseVector vector = new DenseVector(unbalancedEquation.ListOfElements.Count);
             for (int i = 0; i < unbalancedEquation.ListOfElements.Count; i++)
             {
-                vector[i] = lastMolecule.GetSubscriptCount(unbalancedEquation.ListOfElements[i]);
+                vector[i] = lastMolecule.GetDeepElementCount(unbalancedEquation.ListOfElements[i]);
             }
             return vector;
         }
@@ -128,12 +147,12 @@ namespace AngryElectron.Domain
                     if (column < reactants.Count)
                     {
                         currentMolecule = (ElementGroup)reactants[column];
-                        myMatrix[row, column] = currentMolecule.GetSubscriptCount(listOfSymbols[row]);
+                        myMatrix[row, column] = currentMolecule.GetDeepElementCount(listOfSymbols[row]);
                     }
                     else
                     {
                         currentMolecule = (ElementGroup)products[column - reactants.Count];
-                        myMatrix[row, column] = (currentMolecule.GetSubscriptCount(listOfSymbols[row]) * -1);
+                        myMatrix[row, column] = (currentMolecule.GetDeepElementCount(listOfSymbols[row]) * -1);
                     }
                 }
             }

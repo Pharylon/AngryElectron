@@ -11,7 +11,6 @@ namespace AngryElectron.Tests.Domain
         Balancer myBalancer;
         IEquation myEquation;
         Parser myParser;
-        List<string> listOfSymbols;
 
         [TestInitialize]
         public void Inititalize()
@@ -24,7 +23,8 @@ namespace AngryElectron.Tests.Domain
         [TestMethod]
         public void BalancerTest1()
         {
-            //Assert.IsInstanceOfType(myBalancer.generateListOfSymobols(myEquation), List<string>);
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToString() == "K4Fe(CN6) + KMnO4 + H2SO4 --> KHSO4 + Fe2(SO4)3 +MnSO4 + HNO3 + CO2 + H2O");
         }
 
         [TestMethod]

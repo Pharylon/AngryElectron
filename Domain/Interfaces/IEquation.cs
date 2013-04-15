@@ -11,8 +11,6 @@ namespace AngryElectron.Domain
         IParsableSymbols Reactants { get; }
         IParsableSymbols Products { get; }
         int MoleculeCount { get; }
-        int ReactantCount { get; }
-        int ProductCount { get; }
         String ToString();
     }
 }

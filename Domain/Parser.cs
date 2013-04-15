@@ -9,7 +9,6 @@ namespace AngryElectron.Domain
     public class Parser : IParser
     {
         ElementGroupBuilder myBuilder = new ElementGroupBuilder();
-        EquationDelegate addToEquation;
 
         public IEquation Parse(string inputString)
         {
@@ -20,17 +19,17 @@ namespace AngryElectron.Domain
 
         private ChemicalEquation convertArrayToEquation(string[] symbolArray)
         {
-            ChemicalEquation myChemicalEquation = new ChemicalEquation(ref addToEquation);
+            ChemicalEquation myChemicalEquation = new ChemicalEquation();
             List<string> moleculeString = new List<string>();
-            Side parsingSide = Side.Reactants;
+            Side parsingSide = Side.LeftSide;
             for (int i = 0; i < symbolArray.Length; i++)
             {
                 if (symbolArray[i] == "+" || symbolArray[i] == ">" || symbolArray[i] == "|")  //Finding one of these operators tells us we're at the end of a molecule.
                 {
-                    addToEquation(myBuilder.buildElementGroup(moleculeString, GroupType.Molecule), parsingSide);
+                    myChemicalEquation.AddToEquation(myBuilder.buildElementGroup(moleculeString, false), parsingSide);
                     moleculeString = new List<string>(); //reset for the next loop
                     if (symbolArray[i] == ">")
-                        parsingSide = Side.Products;
+                        parsingSide = Side.RightSide;
                 }
                 else
                     moleculeString.Add(symbolArray[i]); //If we didn't find an "end of molecule" operator, the symbol is added to moleculeString. 

@@ -53,7 +53,7 @@ namespace AngryElectron.Domain
             get { return new List<string>() { Symbol}; }
         }
 
-        public int GetSubscriptCount(string key)
+        public int GetDeepElementCount(string key)
         {
             return 1;
         }

@@ -10,15 +10,13 @@ namespace AngryElectron.Domain
 
     public class ChemicalEquation : IEquation
     {
-        private ElementGroup reactants = new ElementGroup(GroupType.Reactants);
-        private ElementGroup products = new ElementGroup(GroupType.Products);
+        private EquationSide reactants = new EquationSide();
+        private EquationSide products = new EquationSide();
 
         public IParsableSymbols Reactants { get { return reactants; } }
         public IParsableSymbols Products { get { return products; } }
 
         public int MoleculeCount { get { return reactants.Count + products.Count; } }
-        public int ReactantCount { get { return reactants.Count; } }
-        public int ProductCount { get { return products.Count; } }
 
         public List<string> ListOfElements
         {
@@ -29,16 +27,11 @@ namespace AngryElectron.Domain
             }
         }
 
-        public ChemicalEquation(ref EquationDelegate eqCallback)
+        public void AddToEquation(IParsableSymbols chemical, Side side)
         {
-            eqCallback = AddToEquation;
-        }
-
-        private void AddToEquation(IParsableSymbols chemical, Side side)
-        {
-            if (side == Side.Reactants)
+            if (side == Side.LeftSide)
                 reactants.Add(chemical);
-            if (side == Side.Products)
+            if (side == Side.RightSide)
                 products.Add(chemical);
         }
         
@@ -53,7 +46,7 @@ namespace AngryElectron.Domain
                         symbols.Add(symbol);
                     symbols.Add("+");
                 }
-                symbols.RemoveAt(symbols.Count - 1);
+                symbols.RemoveAt(symbols.Count - 1); //trim the last "+" the above loop added.
                 symbols.Add("->");
                 foreach (IParsableSymbols product in products)
                 {
@@ -61,7 +54,7 @@ namespace AngryElectron.Domain
                         symbols.Add(symbol);
                     symbols.Add("+");
                 }
-                symbols.RemoveAt(symbols.Count - 1);
+                symbols.RemoveAt(symbols.Count - 1); //trim the last "+" the above loop added.
 
                 return symbols;
             }
@@ -85,9 +78,9 @@ namespace AngryElectron.Domain
             return sb.ToString();
         }
 
-        public int GetSubscriptCount(string key)
+        public int GetDeepElementCount(string key)
         {
-            return products.GetSubscriptCount(key) + reactants.GetSubscriptCount(key);
+            return products.GetDeepElementCount(key) + reactants.GetDeepElementCount(key);
         }
     }
 }

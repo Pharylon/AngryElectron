@@ -8,16 +8,7 @@ namespace AngryElectron.Domain
 {
     public enum Side
     {
-        Reactants,
-        Products,
-    }
-
-    public enum GroupType
-    {
-        Molecule,
-        Complex,
-        Reactants,
-        Products,
-        ElementWrapper,
+        LeftSide,
+        RightSide,
     }
 }

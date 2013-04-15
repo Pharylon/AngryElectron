@@ -23,9 +23,13 @@ namespace AngryElectron.Domain
                 dictionaryOfElements.Add(element.Symbol, element);
         }
 
-        public IParsableSymbols buildElementGroup(List<string> stringList, GroupType type)
+        public IParsableSymbols buildElementGroup(List<string> stringList, bool createComplex)
         {
-            ElementGroup myElementGroup = new ElementGroup(type);
+            ElementGroup myElementGroup;
+            if (createComplex)
+                myElementGroup = new Complex();
+            else
+                myElementGroup = new Molecule();
             IParsableSymbols chemical;
             for (int i = 0; i < stringList.Count; i++)
             {
@@ -39,18 +43,23 @@ namespace AngryElectron.Domain
                 else
                 {
                     int subscript = setSubscript(stringList, i);
-                    while (subscript > 0)
-                    {
-                        myElementGroup.Add(chemical);
-                        subscript--;
-                    }
+                    subscript = addChemicalToElementGroup(myElementGroup, chemical, subscript);
                 }
             }
-
             if (myElementGroup.Count == 1)      //If the final molecule contains only a single element, return in a ElementWrapper instead of a molecule
-                return new ElementGroup(GroupType.ElementWrapper, myElementGroup[0]);
+                return new ElementWrapper((Element)myElementGroup[0]);
             else
                 return myElementGroup;
+        }
+
+        private static int addChemicalToElementGroup(ElementGroup myElementGroup, IParsableSymbols chemical, int subscript)
+        {
+            while (subscript > 0)
+            {
+                myElementGroup.Add(chemical);
+                subscript--;
+            }
+            return subscript;
         }
 
         private IParsableSymbols findNextElement(string symbol)
@@ -81,7 +90,7 @@ namespace AngryElectron.Domain
             List<string> complex = new List<string>();
             for (int n = i + 1; n < endParenthesisLoc; n++)
                 complex.Add(stringList[n]);
-            IParsableSymbols myComplex = buildElementGroup(complex, GroupType.Complex);
+            IParsableSymbols myComplex = buildElementGroup(complex, true);
             i = endParenthesisLoc; //We've added everything within the parentheses, so we need to set i to the closing parenthesis location.
             return myComplex;
         }

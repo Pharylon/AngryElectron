@@ -10,7 +10,7 @@ namespace AngryElectron.Domain
     {
         IEnumerable<String> ParsableSymbols { get; }
         List<String> ListOfElements { get; }
-        int GetSubscriptCount(string key);
+        int GetDeepElementCount(string key);
         String ToHTML();
     }
 }
