@@ -11,10 +11,10 @@ namespace AngryElectron.Domain
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < contents.Count; i++)
             {
-                sb.Append(this[i].ToString());
-                if (i != this.Count - 1)
+                sb.Append(contents[i].ToString());
+                if (i != contents.Count - 1)
                     sb.Append("+");
             }
             return sb.ToString();
@@ -23,10 +23,10 @@ namespace AngryElectron.Domain
         public override string ToHTML()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < contents.Count; i++)
             {
-                sb.Append(this[i].ToHTML());
-                if (i != this.Count - 1)
+                sb.Append(contents[i].ToHTML());
+                if (i != contents.Count - 1)
                     sb.Append("+");
             }
             return sb.ToString();

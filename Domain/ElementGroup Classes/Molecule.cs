@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 namespace AngryElectron.Domain
 {
     class Molecule : ElementGroup
-    {
-        public int Coefficient = 1;
-
+    {        
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             foreach (string symbol in this.ListOfContents)
             {
-                int count = this.GetShallowCount(symbol);
+                int count = GetShallowCount(symbol);
                 if (count == 1)
                     sb.Append(symbol);
                 else
@@ -31,7 +29,7 @@ namespace AngryElectron.Domain
             StringBuilder sb = new StringBuilder();
             foreach (string symbol in this.ListOfContents)
             {
-                int count = this.GetShallowCount(symbol);
+                int count = GetShallowCount(symbol);
                 if (count == 1)
                     sb.Append(symbol);
                 else

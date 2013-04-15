@@ -11,9 +11,10 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            //writeBalancedEquation("Na2CO3 + HCl -> NaCl + H2O + CO2");
+            writeBalancedEquation("H(SO2) -> O + H + S");
+            writeBalancedEquation("Na2CO3 + HCl -> NaCl + H2O + CO2");
             writeBalancedEquation("FeS2 + O2 -> Fe2O3 + SO2");
-            //writeBalancedEquation("SnO2 + H2 -> Sn + H2O");
+            writeBalancedEquation("SnO2 + H2 -> Sn + H2O");
             //writeBalancedEquation("H2 + O2 -> H2O");
             writeBalancedEquation("Fe2(SO4)3 + KOH -> K2SO4 + Fe(OH)3");
             //writeBalancedEquation("KMnO4 + HCl = KCl + MnCl2 + H2O + Cl2");
