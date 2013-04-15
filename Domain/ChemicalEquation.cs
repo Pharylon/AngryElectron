@@ -6,33 +6,30 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public delegate void EquationDelegate(IParsableSymbols symbol, Side side);
+    public delegate void EquationDelegate(IChemical symbol, Side side);
 
-    public class ChemicalEquation : IEquation
+    public class ChemicalEquation
     {
-        private EquationSide reactants = new EquationSide();
-        private EquationSide products = new EquationSide();
+        public EquationSide Reactants = new EquationSide();
+        public EquationSide Products = new EquationSide();
 
-        public IParsableSymbols Reactants { get { return reactants; } }
-        public IParsableSymbols Products { get { return products; } }
-
-        public int MoleculeCount { get { return reactants.Count + products.Count; } }
+        public int MoleculeCount { get { return Reactants.Count + Products.Count; } }
 
         public List<string> ListOfElements
         {
             get
             {
-                List<string> content = reactants.ListOfElements.Union(products.ListOfElements).ToList();
+                List<string> content = Reactants.ListOfElements.Union(Products.ListOfElements).ToList();
                 return content;
             }
         }
 
-        public void AddToEquation(IParsableSymbols chemical, Side side)
+        public void AddToEquation(IChemical chemical, Side side)
         {
             if (side == Side.LeftSide)
-                reactants.Add(chemical);
+                Reactants.Add(chemical);
             if (side == Side.RightSide)
-                products.Add(chemical);
+                Products.Add(chemical);
         }
         
         public IEnumerable<string> ParsableSymbols
@@ -40,22 +37,21 @@ namespace AngryElectron.Domain
             get
             {
                 List<string> symbols = new List<string>();
-                foreach (IParsableSymbols reactant in reactants)
+                for (int i = 0; i < Reactants.Count; i++)
                 {
-                    foreach (string symbol in reactant.ParsableSymbols)
+                    foreach (string symbol in Reactants[i].ParsableSymbols)
                         symbols.Add(symbol);
-                    symbols.Add("+");
+                    if (i != Reactants.Count -1)
+                        symbols.Add("+");
                 }
-                symbols.RemoveAt(symbols.Count - 1); //trim the last "+" the above loop added.
                 symbols.Add("->");
-                foreach (IParsableSymbols product in products)
+                for (int i = 0; i < Products.Count; i++)
                 {
-                    foreach (string symbol in product.ParsableSymbols)
+                    foreach (string symbol in Products[i].ParsableSymbols)
                         symbols.Add(symbol);
-                    symbols.Add("+");
+                    if (i != Products.Count - 1)
+                        symbols.Add("+");
                 }
-                symbols.RemoveAt(symbols.Count - 1); //trim the last "+" the above loop added.
-
                 return symbols;
             }
         }
@@ -78,9 +74,9 @@ namespace AngryElectron.Domain
             return sb.ToString();
         }
 
-        public int GetDeepElementCount(string key)
+        public int GetDeepElementCount(string symbol)
         {
-            return products.GetDeepElementCount(key) + reactants.GetDeepElementCount(key);
+            return Products.GetDeepElementCount(symbol) + Reactants.GetDeepElementCount(symbol);
         }
     }
 }

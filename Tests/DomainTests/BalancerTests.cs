@@ -9,7 +9,7 @@ namespace AngryElectron.Tests.Domain
     public class BalancerTest
     {
         Balancer myBalancer;
-        IEquation myEquation;
+        ChemicalEquation myEquation;
         Parser myParser;
 
         [TestInitialize]

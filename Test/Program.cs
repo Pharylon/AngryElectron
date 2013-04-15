@@ -12,7 +12,7 @@ namespace Test
         static void Main(string[] args)
         {
             //writeBalancedEquation("Na2CO3 + HCl -> NaCl + H2O + CO2");
-            //writeBalancedEquation("FeS2 + O2 -> Fe2O3 + SO2");
+            writeBalancedEquation("FeS2 + O2 -> Fe2O3 + SO2");
             //writeBalancedEquation("SnO2 + H2 -> Sn + H2O");
             //writeBalancedEquation("H2 + O2 -> H2O");
             writeBalancedEquation("Fe2(SO4)3 + KOH -> K2SO4 + Fe(OH)3");
@@ -46,7 +46,7 @@ namespace Test
         private static void writeParsableSymbols(string myString)
         {
             Parser myParser = new Parser();
-            IEquation myEquation;
+            ChemicalEquation myEquation;
             try
             {
                 myEquation = myParser.Parse(myString);
@@ -62,7 +62,7 @@ namespace Test
         {
             Parser myParser = new Parser();
             Balancer myBalancer = new Balancer();
-            IEquation myEquation;
+            ChemicalEquation myEquation;
             //try
             //{
                 myEquation = myParser.Parse(myString);

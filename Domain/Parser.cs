@@ -10,7 +10,7 @@ namespace AngryElectron.Domain
     {
         ElementGroupBuilder myBuilder = new ElementGroupBuilder();
 
-        public IEquation Parse(string inputString)
+        public ChemicalEquation Parse(string inputString)
         {
             string[] symbolArray = createSymbolArray(inputString);
             ChemicalEquation myChemicalEquation = convertArrayToEquation(symbolArray);

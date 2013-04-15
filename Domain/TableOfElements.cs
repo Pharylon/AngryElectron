@@ -21,6 +21,7 @@ namespace AngryElectron.Domain
         {
             initializeTableOfElements(path);
         }
+
         public string Json 
         { 
             get
@@ -29,6 +30,7 @@ namespace AngryElectron.Domain
                 return streamReader.ReadToEnd().ToString();
             }
         }
+
         private void initializeTableOfElements(string path)
         {
             StreamReader streamReader = new StreamReader(path);

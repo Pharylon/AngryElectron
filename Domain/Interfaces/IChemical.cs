@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public interface IParsableSymbols
+    public interface IChemical
     {
         IEnumerable<String> ParsableSymbols { get; }
-        List<String> ListOfElements { get; }
-        int GetDeepElementCount(string key);
         String ToHTML();
     }
 }

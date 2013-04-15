@@ -8,6 +8,6 @@ namespace AngryElectron.Domain
 {
     interface IParser
     {
-        IEquation Parse(string reaction);
+        ChemicalEquation Parse(string reaction);
     }
 }

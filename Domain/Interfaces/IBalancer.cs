@@ -8,6 +8,6 @@ namespace AngryElectron.Domain
 {
     public interface IBalancer
     {
-        IEquation Balance(IEquation equation);
+        ChemicalEquation Balance(ChemicalEquation equation);
     }
 }

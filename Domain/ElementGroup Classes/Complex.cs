@@ -55,7 +55,7 @@ namespace AngryElectron.Domain
             {
                 List<string> symbols = new List<string>();
                 symbols.Add("(");
-                foreach (IParsableSymbols unit in this)
+                foreach (IChemical unit in this)
                     foreach (string symbol in unit.ParsableSymbols)
                         symbols.Add(symbol);
                 symbols.Add(")");

@@ -55,12 +55,10 @@
     <Compile Include="Element.cs" />
     <Compile Include="ElementGroup Classes\ElementGroup.cs" />
     <Compile Include="ElementGroupBuilder.cs" />
-    <Compile Include="ElementGroup Classes\ElementWrapper.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ElementGroup Classes\EquationSide.cs" />
     <Compile Include="Interfaces\IBalancer.cs" />
-    <Compile Include="Interfaces\IEquation.cs" />
-    <Compile Include="Interfaces\IParsableSymbols.cs" />
+    <Compile Include="Interfaces\IChemical.cs" />
     <Compile Include="Interfaces\IParser.cs" />
     <Compile Include="ElementGroup Classes\Molecule.cs" />
     <Compile Include="Parser.cs" />

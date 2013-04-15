@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class Element : IEquatable<Element>, IComparable<Element>, IParsableSymbols
+    public class Element : IEquatable<Element>, IComparable<Element>, IChemical
     {
         public string Symbol { get; set; }
         public int AtomicNumber { get; set; }
@@ -45,17 +45,6 @@ namespace AngryElectron.Domain
         public string ToHTML()
         {
             return Symbol;
-        }
-
-
-        public List<string> ListOfElements
-        {
-            get { return new List<string>() { Symbol}; }
-        }
-
-        public int GetDeepElementCount(string key)
-        {
-            return 1;
         }
     }
 }

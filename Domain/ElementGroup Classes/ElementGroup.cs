@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class ElementGroup : List<IParsableSymbols>, IParsableSymbols
+    public class ElementGroup : List<IChemical>, IChemical
     {
         protected Dictionary<string, Element> dictionaryOfElements;
 
@@ -20,7 +20,7 @@ namespace AngryElectron.Domain
             get 
             {
                 List<string> elementList = new List<string>();
-                foreach (IParsableSymbols unit in this)
+                foreach (IChemical unit in this)
                 {
                     foreach (string symbol in unit.ParsableSymbols)
                         if (dictionaryOfElements.ContainsKey(symbol) && !elementList.Contains(symbol))
@@ -35,7 +35,7 @@ namespace AngryElectron.Domain
             get
             {
                 List<string> contents = new List<string>();
-                foreach (IParsableSymbols unit in this)
+                foreach (IChemical unit in this)
                 {
                     if (!contents.Contains(unit.ToString()))
                         contents.Add(unit.ToString());
@@ -52,20 +52,20 @@ namespace AngryElectron.Domain
                 dictionaryOfElements.Add(element.Symbol, element);
         }
 
-        public int GetDeepElementCount(string key)
+        public int GetDeepElementCount(string symbol)
         {
             int count = 0;
-            foreach (string symbol in this.ParsableSymbols)
-                if (symbol == key)
+            foreach (string s in this.ParsableSymbols)
+                if (symbol == s)
                     count++;
             return count;
         }
 
-        public int GetShallowCount(string key)
+        public int GetShallowCount(string symbol)
         {
             int count = 0;
-            foreach (IParsableSymbols unit in this)
-                if (key == unit.ToString())
+            foreach (IChemical unit in this)
+                if (symbol == unit.ToString())
                     count++;
             return count;
         }
@@ -75,7 +75,7 @@ namespace AngryElectron.Domain
             get
             {
                 List<string> symbols = new List<string>();
-                foreach (IParsableSymbols unit in this)
+                foreach (IChemical unit in this)
                     foreach (string symbol in unit.ParsableSymbols)
                         symbols.Add(symbol);
                 return symbols;
@@ -84,7 +84,7 @@ namespace AngryElectron.Domain
 
         public virtual string ToHTML()
         {
-            throw new NotImplementedException("ToHTML() should not be called from the ElementGroup Class");
+            throw new NotImplementedException("ToHTML() should only be called from an inherited class.");
         }
     }
 }

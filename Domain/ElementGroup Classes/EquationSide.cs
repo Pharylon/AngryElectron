@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class EquationSide : ElementGroup
+    public class EquationSide : ElementGroup
     {
         public override string ToString()
         {
