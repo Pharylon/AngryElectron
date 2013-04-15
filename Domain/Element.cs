@@ -12,10 +12,9 @@ namespace AngryElectron.Domain
         public int AtomicNumber { get; set; }
         public double AtomicMass { get; set; }
         public string Name { get; set; }
-        public int Coefficient { get; set; }
         public Element()
         {
-            Coefficient = 1;
+           
         }
 
         public bool Equals(Element other)

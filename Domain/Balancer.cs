@@ -36,13 +36,13 @@ namespace AngryElectron.Domain
 
         private void addCoefficients(List<int> answers, ChemicalEquation unbalancedEquation)
         {
-            IChemical currentMolecule;
+            Molecule currentMolecule;
             for (int i = 0; i < unbalancedEquation.MoleculeCount; i++)
             {
                 if (i < unbalancedEquation.Reactants.Count)
-                    currentMolecule = (IChemical)unbalancedEquation.Reactants[i];
+                    currentMolecule = (Molecule)unbalancedEquation.Reactants[i];
                 else
-                    currentMolecule = (IChemical)unbalancedEquation.Products[i - unbalancedEquation.Reactants.Count];
+                    currentMolecule = (Molecule)unbalancedEquation.Products[i - unbalancedEquation.Reactants.Count];
                 currentMolecule.Coefficient = answers[i];
             }
         }
@@ -120,17 +120,13 @@ namespace AngryElectron.Domain
         }
 
         private DenseVector buildVector(ChemicalEquation unbalancedEquation)
-        {      
+        {
+            ElementGroup products = (ElementGroup)unbalancedEquation.Products;
+            ElementGroup lastMolecule = (ElementGroup)products[products.Count - 1];
             DenseVector vector = new DenseVector(unbalancedEquation.ListOfElements.Count);
             for (int i = 0; i < unbalancedEquation.ListOfElements.Count; i++)
             {
-                if (unbalancedEquation.Products[unbalancedEquation.Products.Count - 1] is Element)
-                    vector[i] = 1;
-                else
-                {
-                    ElementGroup lastChemical = (ElementGroup)unbalancedEquation.Products[unbalancedEquation.Products.Count - 1];
-                    vector[i] = lastChemical.GetDeepElementCount(unbalancedEquation.ListOfElements[i]);
-                }
+                vector[i] = lastMolecule.GetDeepElementCount(unbalancedEquation.ListOfElements[i]);
             }
             return vector;
         }
@@ -146,23 +142,13 @@ namespace AngryElectron.Domain
                 {
                     if (column < unbalancedEquation.Reactants.Count)
                     {
-                        if (unbalancedEquation.Reactants[column] is Element)
-                            myMatrix[row, column] = 1;
-                        else
-                        {
-                            currentMolecule = (ElementGroup)unbalancedEquation.Reactants[column];
-                            myMatrix[row, column] = currentMolecule.GetDeepElementCount(listOfSymbols[row]);
-                        }
+                        currentMolecule = (ElementGroup)unbalancedEquation.Reactants[column];
+                        myMatrix[row, column] = currentMolecule.GetDeepElementCount(listOfSymbols[row]);
                     }
                     else
                     {
-                        if (unbalancedEquation.Products[column - unbalancedEquation.Reactants.Count] is Element)
-                            myMatrix[row, column] = 1;
-                        else
-                        {
-                            currentMolecule = (ElementGroup)unbalancedEquation.Products[column - unbalancedEquation.Reactants.Count];
-                            myMatrix[row, column] = (currentMolecule.GetDeepElementCount(listOfSymbols[row]) * -1);
-                        }
+                        currentMolecule = (ElementGroup)unbalancedEquation.Products[column - unbalancedEquation.Reactants.Count];
+                        myMatrix[row, column] = (currentMolecule.GetDeepElementCount(listOfSymbols[row]) * -1);
                     }
                 }
             }
