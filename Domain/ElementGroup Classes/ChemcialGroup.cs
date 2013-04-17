@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class ElementGroup : IChemical, IEnumerator<IChemical>, IEnumerable<IChemical>
+    public class ChemicalGroup : IChemical, IEnumerator<IChemical>, IEnumerable<IChemical>
     {
         protected List<IChemical> contents = new List<IChemical>();
         int position = -1;
 
         protected Dictionary<string, Element> dictionaryOfElements;
 
-        public ElementGroup(int coefficient = 1)
+        public ChemicalGroup(int coefficient = 1)
         {
             initializeDictionaryOfElements();
         }

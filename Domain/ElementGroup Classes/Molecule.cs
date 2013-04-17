@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class Molecule : ElementGroup
+    class Molecule : ChemicalGroup
     {        
         public override string ToString()
         {

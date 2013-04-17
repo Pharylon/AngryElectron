@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class EquationSide : ElementGroup
+    public class EquationSide : ChemicalGroup
     {
         public Dictionary<string, int> Coefficients = new Dictionary<string, int>();
 
@@ -35,6 +35,8 @@ namespace AngryElectron.Domain
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < contents.Count; i++)
             {
+                if (Coefficients[contents[i].ToString()] > 1)
+                    sb.Append(Coefficients[contents[i].ToString()].ToString());
                 sb.Append(contents[i].ToHTML());
                 if (i != contents.Count - 1)
                     sb.Append(" + ");

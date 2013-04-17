@@ -25,7 +25,7 @@ namespace AngryElectron.Domain
 
         public IChemical buildElementGroup(List<string> stringList, bool createComplex)
         {
-            ElementGroup myElementGroup;
+            ChemicalGroup myElementGroup;
             if (createComplex)
                 myElementGroup = new Complex();
             else
@@ -52,7 +52,7 @@ namespace AngryElectron.Domain
                 return myElementGroup;
         }
 
-        private static int addChemicalToElementGroup(ElementGroup myElementGroup, IChemical chemical, int subscript)
+        private static int addChemicalToElementGroup(ChemicalGroup myElementGroup, IChemical chemical, int subscript)
         {
             while (subscript > 0)
             {

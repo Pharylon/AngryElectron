@@ -119,7 +119,7 @@ namespace AngryElectron.Domain
                     vector[i] = 1;
                 else
                 {
-                    ElementGroup lastChemical = (ElementGroup)unbalancedEquation.Products[unbalancedEquation.Products.Count - 1];
+                    ChemicalGroup lastChemical = (ChemicalGroup)unbalancedEquation.Products[unbalancedEquation.Products.Count - 1];
                     vector[i] = lastChemical.GetDeepElementCount(unbalancedEquation.ListOfElements[i]);
                 }
             }
@@ -146,18 +146,12 @@ namespace AngryElectron.Domain
         private double getMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<string> listOfSymbols)
         {
             double answer = 0;
-            EquationSide currentSide;
-            if (processingSide == Side.LeftSide)
-                currentSide = unbalancedEquation.Reactants;
-            else
-            {
-                currentSide = unbalancedEquation.Products;
+            EquationSide currentSide = setCurrentProcessingSide(unbalancedEquation, processingSide);
+            if (processingSide == Side.RightSide)
                 column -= unbalancedEquation.Reactants.Count;
-            }
-            ElementGroup currentMolecule;
-            if (currentSide[column] is ElementGroup)
+            if (currentSide[column] is ChemicalGroup)
             {
-                currentMolecule = (ElementGroup)currentSide[column];
+                ChemicalGroup currentMolecule = (ChemicalGroup)currentSide[column];
                 answer = currentMolecule.GetDeepElementCount(listOfSymbols[row]);
             }
             else
@@ -166,6 +160,16 @@ namespace AngryElectron.Domain
             if (processingSide == Side.RightSide)
                 answer *= -1.0;
             return answer;
+        }
+
+        private static EquationSide setCurrentProcessingSide(ChemicalEquation unbalancedEquation, Side processingSide)
+        {
+            EquationSide currentSide;
+            if (processingSide == Side.LeftSide)
+                currentSide = unbalancedEquation.Reactants;
+            else
+                currentSide = unbalancedEquation.Products;
+            return currentSide;
         }
 
         private void checkForValidEquation(ChemicalEquation unbalancedEquation)

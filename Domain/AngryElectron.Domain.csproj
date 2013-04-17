@@ -53,7 +53,7 @@
     <Compile Include="ChemicalEquation.cs" />
     <Compile Include="ElementGroup Classes\Complex.cs" />
     <Compile Include="Element.cs" />
-    <Compile Include="ElementGroup Classes\ElementGroup.cs" />
+    <Compile Include="ElementGroup Classes\ChemcialGroup.cs" />
     <Compile Include="ElementGroupBuilder.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ElementGroup Classes\EquationSide.cs" />

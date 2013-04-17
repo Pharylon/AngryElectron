@@ -28,6 +28,14 @@ namespace AngryElectron.Tests.Domain
         }
 
         [TestMethod]
+        public void BalancerHTMLTest()
+        {
+            myEquation = myParser.Parse("FeS2 + O2 -> Fe2O3 + SO2");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToHTML() == "4FeS<sub>2</sub> + 11O<sub>2</sub> -> 2Fe<sub>2</sub>O<sub>3</sub> + 8SO<sub>2</sub>");
+        }
+
+        [TestMethod]
         public void BalancerWithComplexTest()
         {
             myEquation = myParser.Parse("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
@@ -36,11 +44,27 @@ namespace AngryElectron.Tests.Domain
         }
 
         [TestMethod]
-        public void EquationWithLoneElementTest()
+        public void BalancerHTMLWithComplexTest()
+        {
+            myEquation = myParser.Parse("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToHTML() == "CaCl<sub>2</sub> + 2Ag(NO<sub>3</sub>) -> Ca(NO<sub>3</sub>)<sub>2</sub> + 2AgCl");
+        }
+
+        [TestMethod]
+        public void BalancerWithLoneElementTest()
         {
             myEquation = myParser.Parse("HCl + Na = NaCl + H2");
             myEquation = myBalancer.Balance(myEquation);
             Assert.IsTrue(myEquation.ToString() == "2HCl + 2Na -> 2NaCl + H2");
+        }
+
+        [TestMethod]
+        public void BalancerHTMLWithLoneElementTest()
+        {
+            myEquation = myParser.Parse("HCl + Na = NaCl + H2");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToHTML() == "2HCl + 2Na -> 2NaCl + H<sub>2</sub>");
         }
     }
 }
