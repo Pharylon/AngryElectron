@@ -19,8 +19,6 @@ namespace AngryElectron.Domain
                 else
                     sb.Append(symbol + count.ToString());
             }
-            if (Coefficient != 1)
-                sb.Insert(0, this.Coefficient);
             return sb.ToString();
         }
 
@@ -44,8 +42,6 @@ namespace AngryElectron.Domain
                     sb.Insert(i, "<sub>");
                 }
             }
-            if (Coefficient != 1)
-                sb.Insert(0, this.Coefficient);
             return sb.ToString();
         }
     }

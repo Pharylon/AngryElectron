@@ -11,17 +11,16 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            writeBalancedEquation("H(SO2) -> O + H + S");
-            writeBalancedEquation("Na2CO3 + HCl -> NaCl + H2O + CO2");
-            writeBalancedEquation("FeS2 + O2 -> Fe2O3 + SO2");
-            writeBalancedEquation("SnO2 + H2 -> Sn + H2O");
+            //writeBalancedEquation("Na2CO3 + HCl -> NaCl + H2O + CO2");
+            //writeBalancedEquation("FeS2 + O2 -> Fe2O3 + SO2");
+            //writeBalancedEquation("SnO2 + H2 -> Sn + H2O");
             //writeBalancedEquation("H2 + O2 -> H2O");
             writeBalancedEquation("Fe2(SO4)3 + KOH -> K2SO4 + Fe(OH)3");
             //writeBalancedEquation("KMnO4 + HCl = KCl + MnCl2 + H2O + Cl2");
 
             //writeParsableSymbols("2Co2 + H2O -> C6H12O6 + O2");
 
-            //writeParsableSymbols("HCl + Na -> NaCl + H2");
+            writeBalancedEquation("HCl + Na -> NaCl + H2");
 
             //writeParsableSymbols("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
 
@@ -64,15 +63,15 @@ namespace Test
             Parser myParser = new Parser();
             Balancer myBalancer = new Balancer();
             ChemicalEquation myEquation;
-            //try
-            //{
+            try
+            {
                 myEquation = myParser.Parse(myString);
                 myEquation = myBalancer.Balance(myEquation);
                 Console.WriteLine(myEquation.ToString());
                 Console.WriteLine(myEquation.ToHTML());
                 Console.Write(Environment.NewLine);
-            //}
-            //catch (ArgumentException ex) { Console.WriteLine(ex.Message); }
+            }
+            catch (ArgumentException ex) { Console.WriteLine(ex.Message); }
         }
     }
 }

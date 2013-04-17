@@ -8,7 +8,6 @@ namespace AngryElectron.Domain
 {
     public class ElementGroup : IChemical, IEnumerator<IChemical>, IEnumerable<IChemical>
     {
-        public int Coefficient { get; set; }
         protected List<IChemical> contents = new List<IChemical>();
         int position = -1;
 
@@ -17,7 +16,6 @@ namespace AngryElectron.Domain
         public ElementGroup(int coefficient = 1)
         {
             initializeDictionaryOfElements();
-            Coefficient = 1;
         }
 
         public List<string> ListOfElements 
@@ -127,7 +125,7 @@ namespace AngryElectron.Domain
         {
         }
 
-        public void Add(IChemical chemical)
+        public virtual void Add(IChemical chemical)
         {
             contents.Add(chemical);
         }

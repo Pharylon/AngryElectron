@@ -17,33 +17,24 @@ namespace AngryElectron.Domain
             checkForValidEquation(myEquation);
             List<int> coefficients = solveMatrix(myEquation);
             addCoefficients(coefficients, myEquation);
-            if (finalSanityCheck(myEquation))
-                return myEquation;
-            else
-                throw new ApplicationException ("Error: The balancer failed to balance the equation!");
-        }
-
-        private bool finalSanityCheck(ChemicalEquation myEquation)
-        {
-            //ElementGroup reactants = (ElementGroup)myEquation.Reactants;
-            //ElementGroup products = (ElementGroup)myEquation.Products;
-            //List<string> listOfSymbols = myEquation.ListOfElements;
-            //foreach (string symbol in listOfSymbols)
-            //    if (reactants.GetDeepElementCount(symbol) != products.GetDeepElementCount(symbol))
-            //        return false;
-            return true;
+            return myEquation;
         }
 
         private void addCoefficients(List<int> answers, ChemicalEquation unbalancedEquation)
         {
-            IChemical currentMolecule;
+            IChemical currentChemical;
             for (int i = 0; i < unbalancedEquation.MoleculeCount; i++)
             {
                 if (i < unbalancedEquation.Reactants.Count)
-                    currentMolecule = (IChemical)unbalancedEquation.Reactants[i];
+                {
+                    currentChemical = unbalancedEquation.Reactants[i];
+                    unbalancedEquation.Reactants.Coefficients[currentChemical.ToString()] = answers[i];
+                }
                 else
-                    currentMolecule = (IChemical)unbalancedEquation.Products[i - unbalancedEquation.Reactants.Count];
-                currentMolecule.Coefficient = answers[i];
+                {
+                    currentChemical = unbalancedEquation.Products[i - unbalancedEquation.Reactants.Count];
+                    unbalancedEquation.Products.Coefficients[currentChemical.ToString()] = answers[i];
+                }
             }
         }
 
@@ -138,35 +129,43 @@ namespace AngryElectron.Domain
         private DenseMatrix buildMatrix(ChemicalEquation unbalancedEquation)
         {
             List<string> listOfSymbols = unbalancedEquation.ListOfElements;
-            ElementGroup currentMolecule;
+            Side processingSide = Side.LeftSide;
             DenseMatrix myMatrix = new DenseMatrix(listOfSymbols.Count, unbalancedEquation.MoleculeCount - 1);
             for (int column = 0; column < unbalancedEquation.MoleculeCount - 1; column++)
             {
                 for (int row = 0; row < listOfSymbols.Count; row++)
                 {
-                    if (column < unbalancedEquation.Reactants.Count)
-                    {
-                        if (unbalancedEquation.Reactants[column] is Element)
-                            myMatrix[row, column] = 1;
-                        else
-                        {
-                            currentMolecule = (ElementGroup)unbalancedEquation.Reactants[column];
-                            myMatrix[row, column] = currentMolecule.GetDeepElementCount(listOfSymbols[row]);
-                        }
-                    }
-                    else
-                    {
-                        if (unbalancedEquation.Products[column - unbalancedEquation.Reactants.Count] is Element)
-                            myMatrix[row, column] = 1;
-                        else
-                        {
-                            currentMolecule = (ElementGroup)unbalancedEquation.Products[column - unbalancedEquation.Reactants.Count];
-                            myMatrix[row, column] = (currentMolecule.GetDeepElementCount(listOfSymbols[row]) * -1);
-                        }
-                    }
+                    if (column >= unbalancedEquation.Reactants.Count)
+                        processingSide = Side.RightSide;
+                    myMatrix[row, column] = getMatrixPoint(unbalancedEquation, processingSide, column, row, listOfSymbols);
                 }
             }
             return myMatrix;
+        }
+
+        private double getMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<string> listOfSymbols)
+        {
+            double answer = 0;
+            EquationSide currentSide;
+            if (processingSide == Side.LeftSide)
+                currentSide = unbalancedEquation.Reactants;
+            else
+            {
+                currentSide = unbalancedEquation.Products;
+                column -= unbalancedEquation.Reactants.Count;
+            }
+            ElementGroup currentMolecule;
+            if (currentSide[column] is ElementGroup)
+            {
+                currentMolecule = (ElementGroup)currentSide[column];
+                answer = currentMolecule.GetDeepElementCount(listOfSymbols[row]);
+            }
+            else
+                if (currentSide[column].ToString() == listOfSymbols[row])
+                    answer = 1.0;
+            if (processingSide == Side.RightSide)
+                answer *= -1.0;
+            return answer;
         }
 
         private void checkForValidEquation(ChemicalEquation unbalancedEquation)

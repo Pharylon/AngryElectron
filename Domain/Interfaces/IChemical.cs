@@ -10,6 +10,5 @@ namespace AngryElectron.Domain
     {
         IEnumerable<String> ParsableSymbols { get; }
         String ToHTML();
-        int Coefficient { get; set; }
     }
 }
