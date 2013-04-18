@@ -11,7 +11,7 @@ namespace AngryElectron.Domain
         public override void Add(IChemical chemical)
         {
             if (chemical is IComplexContent)
-                contents.Add(chemical);
+                base.Add(chemical);
             else
                 throw new ArgumentException("Complexes may only contain other complexes and elements");
         }
@@ -55,20 +55,6 @@ namespace AngryElectron.Domain
             }
             sb.Append(")");
             return sb.ToString();
-        }
-
-        public override IEnumerable<string> ParsableSymbols
-        {
-            get
-            {
-                List<string> symbols = new List<string>();
-                symbols.Add("(");
-                foreach (IChemical unit in contents)
-                    foreach (string symbol in unit.ParsableSymbols)
-                        symbols.Add(symbol);
-                symbols.Add(")");
-                return symbols;
-            }
         }
     }
 }

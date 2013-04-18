@@ -28,9 +28,9 @@ namespace AngryElectron.Domain
                 return -1;
         }
 
-        public IEnumerable<string> ParsableSymbols
+        public List<Element> ListOfElements
         {
-            get { return new List<string>() { Symbol }; }
+            get { return new List<Element>() { this }; }
         }
 
         public override string ToString()

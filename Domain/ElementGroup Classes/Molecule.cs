@@ -11,7 +11,7 @@ namespace AngryElectron.Domain
         public override void Add(IChemical chemical)
         {
             if (chemical is IMoleculeContent)
-                contents.Add(chemical);
+                base.Add(chemical);
             else
                 throw new ArgumentException("Error: Molecules may only contain complexes and elements");
         }

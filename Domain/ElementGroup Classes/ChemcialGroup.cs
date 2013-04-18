@@ -18,21 +18,35 @@ namespace AngryElectron.Domain
             initializeDictionaryOfElements();
         }
 
-        public abstract void Add(IChemical chemical);
+        public virtual void Add(IChemical chemical)
+        {
+            contents.Add(chemical);
+        }
 
-        public List<string> ListOfElements 
-        { 
-            get 
+        //public List<string> ListOfElements 
+        //{ 
+        //    get 
+        //    {
+        //        List<string> elementList = new List<string>();
+        //        foreach (IChemical chemical in contents)
+        //        {
+        //            foreach (string symbol in chemical.ParsableSymbols)
+        //                if (dictionaryOfElements.ContainsKey(symbol) && !elementList.Contains(symbol))
+        //                    elementList.Add(symbol);
+        //        }
+        //        return elementList;
+        //    } 
+        //}
+
+        public List<Element> ListOfElements
+        {
+            get
             {
-                List<string> elementList = new List<string>();
+                List<Element> elementList = new List<Element>();
                 foreach (IChemical chemical in contents)
-                {
-                    foreach (string symbol in chemical.ParsableSymbols)
-                        if (dictionaryOfElements.ContainsKey(symbol) && !elementList.Contains(symbol))
-                            elementList.Add(symbol);
-                }
+                    elementList = elementList.Union(chemical.ListOfElements).ToList();
                 return elementList;
-            } 
+            }
         }
 
         public List<string> ListOfContents
@@ -57,12 +71,19 @@ namespace AngryElectron.Domain
                 dictionaryOfElements.Add(element.Symbol, element);
         }
 
-        public int GetDeepElementCount(string symbol)
+        public int GetDeepElementCount(Element elementToCheck)
         {
             int count = 0;
-            foreach (string s in this.ParsableSymbols)
-                if (symbol == s)
+            foreach (IChemical chemical in contents)
+            {
+                if (chemical is Element && chemical.ListOfElements.Contains(elementToCheck))
                     count++;
+                else if (chemical is ChemicalGroup)
+                {
+                    ChemicalGroup chemicalGroup = (ChemicalGroup)chemical;
+                    count += chemicalGroup.GetDeepElementCount(elementToCheck);
+                }
+            }
             return count;
         }
 
@@ -75,22 +96,7 @@ namespace AngryElectron.Domain
             return count;
         }
 
-        public virtual IEnumerable<string> ParsableSymbols
-        {
-            get
-            {
-                List<string> symbols = new List<string>();
-                foreach (IChemical unit in contents)
-                    foreach (string symbol in unit.ParsableSymbols)
-                        symbols.Add(symbol);
-                return symbols;
-            }
-        }
-
-        public virtual string ToHTML()
-        {
-            throw new NotImplementedException("ToHTML() should only be called from an inherited class.");
-        }
+        public abstract string ToHTML();
 
         public IChemical Current
         {

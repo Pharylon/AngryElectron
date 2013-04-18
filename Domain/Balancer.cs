@@ -128,22 +128,22 @@ namespace AngryElectron.Domain
 
         private DenseMatrix buildMatrix(ChemicalEquation unbalancedEquation)
         {
-            List<string> listOfSymbols = unbalancedEquation.ListOfElements;
+            List<Element> listOfElements = unbalancedEquation.ListOfElements;
             Side processingSide = Side.LeftSide;
-            DenseMatrix myMatrix = new DenseMatrix(listOfSymbols.Count, unbalancedEquation.MoleculeCount - 1);
+            DenseMatrix myMatrix = new DenseMatrix(listOfElements.Count, unbalancedEquation.MoleculeCount - 1);
             for (int column = 0; column < unbalancedEquation.MoleculeCount - 1; column++)
             {
-                for (int row = 0; row < listOfSymbols.Count; row++)
+                for (int row = 0; row < listOfElements.Count; row++)
                 {
                     if (column >= unbalancedEquation.Reactants.Count)
                         processingSide = Side.RightSide;
-                    myMatrix[row, column] = getMatrixPoint(unbalancedEquation, processingSide, column, row, listOfSymbols);
+                    myMatrix[row, column] = getMatrixPoint(unbalancedEquation, processingSide, column, row, listOfElements);
                 }
             }
             return myMatrix;
         }
 
-        private double getMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<string> listOfSymbols)
+        private double getMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<Element> listOfElements)
         {
             double matrixPoint = 0;
             EquationSide currentSide = setCurrentProcessingSide(unbalancedEquation, processingSide);
@@ -152,10 +152,10 @@ namespace AngryElectron.Domain
             if (currentSide[column] is ChemicalGroup)
             {
                 ChemicalGroup currentMolecule = (ChemicalGroup)currentSide[column];
-                matrixPoint = currentMolecule.GetDeepElementCount(listOfSymbols[row]);
+                matrixPoint = currentMolecule.GetDeepElementCount(listOfElements[row]);
             }
             else
-                if (currentSide[column].ToString() == listOfSymbols[row])
+                if (currentSide[column].ToString() == listOfElements[row].ToString())
                     matrixPoint = 1.0;
             if (processingSide == Side.RightSide)
                 matrixPoint *= -1.0;
@@ -174,10 +174,10 @@ namespace AngryElectron.Domain
 
         private void checkForValidEquation(ChemicalEquation unbalancedEquation)
         {
-            foreach (string s in unbalancedEquation.ListOfElements)
+            foreach (Element e in unbalancedEquation.ListOfElements)
             {
-                if (!unbalancedEquation.Products.ListOfElements.Contains(s) || !unbalancedEquation.Reactants.ListOfElements.Contains(s))
-                    throw new ArgumentException("Error: the element or complex " + s + " could not be found on both sides of the equation");
+                if (!unbalancedEquation.Products.ListOfElements.Contains(e) || !unbalancedEquation.Reactants.ListOfElements.Contains(e))
+                    throw new ArgumentException("Error: the element or complex " + e.ToString() + " could not be found on both sides of the equation");
             }
         }
     }

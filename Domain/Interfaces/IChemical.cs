@@ -8,7 +8,7 @@ namespace AngryElectron.Domain
 {
     public interface IChemical
     {
-        IEnumerable<String> ParsableSymbols { get; }
+        List<Element> ListOfElements { get; }
         String ToHTML();
         double Mass { get; }
     }
