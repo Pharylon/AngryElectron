@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class ChemicalGroup : IChemical, IEnumerator<IChemical>, IEnumerable<IChemical>
+    public abstract class ChemicalGroup : IChemical, IEnumerator<IChemical>, IEnumerable<IChemical>
     {
         protected List<IChemical> contents = new List<IChemical>();
         int position = -1;
@@ -17,6 +17,8 @@ namespace AngryElectron.Domain
         {
             initializeDictionaryOfElements();
         }
+
+        public abstract void Add(IChemical chemical);
 
         public List<string> ListOfElements 
         { 
@@ -125,11 +127,6 @@ namespace AngryElectron.Domain
         {
         }
 
-        public virtual void Add(IChemical chemical)
-        {
-            contents.Add(chemical);
-        }
-
         public int Count
         {
             get
@@ -144,5 +141,17 @@ namespace AngryElectron.Domain
             set { contents[i] = value; }
         }
 
+
+
+        public double Mass
+        {
+            get
+            {
+                double mass = 0;
+                foreach (IChemical chemical in contents)
+                    mass += chemical.Mass;
+                return mass;
+            }
+        }
     }
 }

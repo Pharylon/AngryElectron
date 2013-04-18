@@ -107,7 +107,7 @@ namespace AngryElectron.Domain
                     return answer;
                 }
             }
-            throw new ArgumentException("Could not solve for z");
+            throw new ArgumentException("Balancer Error: Could not solve for z");
         }
 
         private DenseVector buildVector(ChemicalEquation unbalancedEquation)
@@ -145,21 +145,21 @@ namespace AngryElectron.Domain
 
         private double getMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<string> listOfSymbols)
         {
-            double answer = 0;
+            double matrixPoint = 0;
             EquationSide currentSide = setCurrentProcessingSide(unbalancedEquation, processingSide);
             if (processingSide == Side.RightSide)
                 column -= unbalancedEquation.Reactants.Count;
             if (currentSide[column] is ChemicalGroup)
             {
                 ChemicalGroup currentMolecule = (ChemicalGroup)currentSide[column];
-                answer = currentMolecule.GetDeepElementCount(listOfSymbols[row]);
+                matrixPoint = currentMolecule.GetDeepElementCount(listOfSymbols[row]);
             }
             else
                 if (currentSide[column].ToString() == listOfSymbols[row])
-                    answer = 1.0;
+                    matrixPoint = 1.0;
             if (processingSide == Side.RightSide)
-                answer *= -1.0;
-            return answer;
+                matrixPoint *= -1.0;
+            return matrixPoint;
         }
 
         private static EquationSide setCurrentProcessingSide(ChemicalEquation unbalancedEquation, Side processingSide)

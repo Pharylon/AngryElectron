@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public interface IChemical
+    public interface IComplexContent : IChemical
     {
-        IEnumerable<String> ParsableSymbols { get; }
-        String ToHTML();
-        double Mass { get; }
     }
 }

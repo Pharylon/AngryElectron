@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class ElementGroupBuilder
+    class ChemicalGroupBuilder
     {
         Dictionary<string, Element> dictionaryOfElements;
 
-        public ElementGroupBuilder()
+        public ChemicalGroupBuilder()
         {
             initializeDictionaryOfElements();
         }
@@ -23,13 +23,13 @@ namespace AngryElectron.Domain
                 dictionaryOfElements.Add(element.Symbol, element);
         }
 
-        public IChemical buildElementGroup(List<string> stringList, bool createComplex)
+        public IChemical buildChemicalGroup(List<string> stringList, bool createComplex)
         {
-            ChemicalGroup myElementGroup;
+            ChemicalGroup myChemicalGroup;
             if (createComplex)
-                myElementGroup = new Complex();
+                myChemicalGroup = new Complex();
             else
-                myElementGroup = new Molecule();
+                myChemicalGroup = new Molecule();
             IChemical chemical;
             for (int i = 0; i < stringList.Count; i++)
             {
@@ -43,20 +43,20 @@ namespace AngryElectron.Domain
                 else
                 {
                     int subscript = setSubscript(stringList, i);
-                    subscript = addChemicalToElementGroup(myElementGroup, chemical, subscript);
+                    subscript = addChemicalToChemicalGroup(myChemicalGroup, chemical, subscript, createComplex);
                 }
             }
-            if (myElementGroup.Count == 1)      //If the final molecule contains only a single element, return in a ElementWrapper instead of a molecule
-                return myElementGroup[0];
+            if (myChemicalGroup.Count == 1)      //If the final molecule contains only a single element, return in a ElementWrapper instead of a molecule
+                return myChemicalGroup[0];
             else
-                return myElementGroup;
+                return myChemicalGroup;
         }
 
-        private static int addChemicalToElementGroup(ChemicalGroup myElementGroup, IChemical chemical, int subscript)
+        private static int addChemicalToChemicalGroup(ChemicalGroup myChemicalGroup, IChemical chemical, int subscript, bool createComplex)
         {
             while (subscript > 0)
             {
-                myElementGroup.Add(chemical);
+                myChemicalGroup.Add(chemical);
                 subscript--;
             }
             return subscript;
@@ -90,7 +90,7 @@ namespace AngryElectron.Domain
             List<string> complex = new List<string>();
             for (int n = i + 1; n < endParenthesisLoc; n++)
                 complex.Add(stringList[n]);
-            IChemical myComplex = buildElementGroup(complex, true);
+            IChemical myComplex = buildChemicalGroup(complex, true);
             i = endParenthesisLoc; //We've added everything within the parentheses, so we need to set i to the closing parenthesis location.
             return myComplex;
         }

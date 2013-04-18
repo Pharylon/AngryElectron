@@ -66,5 +66,13 @@ namespace AngryElectron.Tests.Domain
             myEquation = myBalancer.Balance(myEquation);
             Assert.IsTrue(myEquation.ToHTML() == "2HCl + 2Na -> 2NaCl + H<sub>2</sub>");
         }
+
+        [TestMethod]
+        public void UnusualInputTest()
+        {
+            myEquation = myParser.Parse("CaCl2 + Ag[NO3] ==> Ca[NO3]2 + AgCl");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToString() == "CaCl2 + 2Ag(NO3) -> Ca(NO3)2 + 2AgCl");
+        }
     }
 }

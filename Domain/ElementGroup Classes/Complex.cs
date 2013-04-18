@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class Complex : ChemicalGroup
+    class Complex : ChemicalGroup , IComplexContent, IMoleculeContent
     {
+        public override void Add(IChemical chemical)
+        {
+            if (chemical is IComplexContent)
+                contents.Add(chemical);
+            else
+                throw new ArgumentException("Complexes may only contain other complexes and elements");
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

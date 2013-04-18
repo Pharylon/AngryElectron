@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class Element : IEquatable<Element>, IComparable<Element>, IChemical
+    public class Element : IEquatable<Element>, IComparable<Element>, IChemical, IComplexContent, IMoleculeContent
     {
         public string Symbol { get; set; }
         public int AtomicNumber { get; set; }
@@ -41,6 +41,14 @@ namespace AngryElectron.Domain
         public string ToHTML()
         {
             return Symbol;
+        }
+
+        public double Mass
+        {
+            get
+            {
+                return AtomicMass;
+            }
         }
     }
 }

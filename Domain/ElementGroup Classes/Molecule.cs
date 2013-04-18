@@ -7,7 +7,15 @@ using System.Threading.Tasks;
 namespace AngryElectron.Domain
 {
     class Molecule : ChemicalGroup
-    {        
+    {
+        public override void Add(IChemical chemical)
+        {
+            if (chemical is IMoleculeContent)
+                contents.Add(chemical);
+            else
+                throw new ArgumentException("Error: Molecules may only contain complexes and elements");
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

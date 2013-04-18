@@ -8,7 +8,7 @@ namespace AngryElectron.Domain
 {
     public class Parser : IParser
     {
-        ElementGroupBuilder myBuilder = new ElementGroupBuilder();
+        ChemicalGroupBuilder myBuilder = new ChemicalGroupBuilder();
 
         public ChemicalEquation Parse(string inputString)
         {
@@ -26,7 +26,7 @@ namespace AngryElectron.Domain
             {
                 if (symbolArray[i] == "+" || symbolArray[i] == ">" || symbolArray[i] == "|")  //Finding one of these operators tells us we're at the end of a molecule.
                 {
-                    myChemicalEquation.AddToEquation(myBuilder.buildElementGroup(moleculeString, false), parsingSide);
+                    myChemicalEquation.AddToEquation(myBuilder.buildChemicalGroup(moleculeString, false), parsingSide);
                     moleculeString = new List<string>(); //reset for the next loop
                     if (symbolArray[i] == ">")
                         parsingSide = Side.RightSide;
@@ -50,6 +50,22 @@ namespace AngryElectron.Domain
         {
             commaSeperatedSymbols.Replace(" ", "");
             commaSeperatedSymbols.Replace("-", "");
+            removeExtraArrows(commaSeperatedSymbols);
+        }
+
+        private static void removeExtraArrows(StringBuilder commaSeperatedSymbols)
+        {
+            bool foundFirstArrow = false;
+            for (int i = commaSeperatedSymbols.Length - 1; i > 0; i--)
+            {
+                if (commaSeperatedSymbols[commaSeperatedSymbols.Length - i] == '>')
+                {
+                    if (foundFirstArrow == false)
+                        foundFirstArrow = true;
+                    else
+                        commaSeperatedSymbols.Remove(commaSeperatedSymbols.Length - i, 2);
+                }
+            }
         }
 
         private static StringBuilder generateCommaSeperatedSymbols(string inputString)
@@ -75,9 +91,9 @@ namespace AngryElectron.Domain
 
         private static string normalizeCharacters(string inputString)
         {
-            inputString = inputString.Replace("=", ">");
             inputString = inputString.Replace("[", "(");
             inputString = inputString.Replace("]", ")");
+            inputString = inputString.Replace("=", ">");
             return inputString;
         }
     }

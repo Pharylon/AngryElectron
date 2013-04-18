@@ -13,8 +13,9 @@ namespace AngryElectron.Domain
         public override void Add(IChemical chemical)
         {
             Coefficients.Add(chemical.ToString(), 1);
-            base.Add(chemical);
+            contents.Add(chemical);
         }
+
 
         public override string ToString()
         {
