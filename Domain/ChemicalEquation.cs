@@ -53,6 +53,15 @@ namespace AngryElectron.Domain
             return Products.GetDeepElementCount(element) + Reactants.GetDeepElementCount(element);
         }
 
-
+        public bool IsBalanced
+        {
+            get
+            {
+                if (Reactants.Mass == Products.Mass)
+                    return true;
+                else
+                    return false;
+            }
+        }
     }
 }

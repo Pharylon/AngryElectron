@@ -15,7 +15,7 @@ namespace Test
             //writeBalancedEquation("FeS2 + O2 -> Fe2O3 + SO2");
             //writeBalancedEquation("SnO2 + H2 -> Sn + H2O");
             //writeBalancedEquation("H2 + O2 -> H2O");
-            //writeBalancedEquation("Fe2(SO4)3 + KOH -> K2SO4 + Fe(OH)3");
+            writeBalancedEquation("Fe2(SO4)3 + KOH -> K2SO4 + Fe(OH)3");
             //writeBalancedEquation("KMnO4 + HCl = KCl + MnCl2 + H2O + Cl2");
 
             //writeParsableSymbols("2Co2 + H2O -> C6H12O6 + O2");

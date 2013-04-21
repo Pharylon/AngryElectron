@@ -9,11 +9,10 @@ namespace AngryElectron.Domain
     public abstract class ChemicalGroup : IChemical, IEnumerator<IChemical>, IEnumerable<IChemical>
     {
         protected List<IChemical> contents = new List<IChemical>();
-        int position = -1;
 
         protected Dictionary<string, Element> dictionaryOfElements;
 
-        public ChemicalGroup(int coefficient = 1)
+        public ChemicalGroup()
         {
             initializeDictionaryOfElements();
         }
@@ -23,41 +22,32 @@ namespace AngryElectron.Domain
             contents.Add(chemical);
         }
 
-        //public List<string> ListOfElements 
-        //{ 
-        //    get 
-        //    {
-        //        List<string> elementList = new List<string>();
-        //        foreach (IChemical chemical in contents)
-        //        {
-        //            foreach (string symbol in chemical.ParsableSymbols)
-        //                if (dictionaryOfElements.ContainsKey(symbol) && !elementList.Contains(symbol))
-        //                    elementList.Add(symbol);
-        //        }
-        //        return elementList;
-        //    } 
-        //}
-
         public List<Element> ListOfElements
         {
             get
             {
                 List<Element> elementList = new List<Element>();
                 foreach (IChemical chemical in contents)
-                    elementList = elementList.Union(chemical.ListOfElements).ToList();
+                    if (chemical is Element && !elementList.Contains(chemical))
+                        elementList.Add((Element)chemical);
+                    else if (chemical is ChemicalGroup)
+                    {
+                        ChemicalGroup chemicalGroup = (ChemicalGroup)chemical;
+                        elementList = elementList.Union(chemicalGroup.ListOfElements).ToList();
+                    }
                 return elementList;
             }
         }
 
-        public List<string> ListOfContents
+        public List<IChemical> ListOfContents
         {
             get
             {
-                List<string> listOfContents = new List<string>();
+                List<IChemical> listOfContents = new List<IChemical>();
                 foreach (IChemical chemical in contents)
                 {
-                    if (!listOfContents.Contains(chemical.ToString()))
-                        listOfContents.Add(chemical.ToString());
+                    if (!listOfContents.Contains(chemical))
+                        listOfContents.Add(chemical);
                 }
                 return listOfContents;
             }
@@ -76,7 +66,7 @@ namespace AngryElectron.Domain
             int count = 0;
             foreach (IChemical chemical in contents)
             {
-                if (chemical is Element && chemical.ListOfElements.Contains(elementToCheck))
+                if (chemical == elementToCheck)
                     count++;
                 else if (chemical is ChemicalGroup)
                 {
@@ -87,16 +77,29 @@ namespace AngryElectron.Domain
             return count;
         }
 
-        public int GetShallowCount(string symbol)
+        public int GetShallowChemicalCount(IChemical chemicalToCheck)
         {
             int count = 0;
-            foreach (IChemical unit in contents)
-                if (symbol == unit.ToString())
+            foreach (IChemical chemical in contents)
+                if (chemicalToCheck == chemical)
                     count++;
             return count;
         }
 
+        public virtual double Mass
+        {
+            get
+            {
+                double mass = 0;
+                foreach (IChemical chemical in contents)
+                    mass += chemical.Mass;
+                return mass;
+            }
+        }
+
         public abstract string ToHTML();
+
+        int position = -1;
 
         public IChemical Current
         {
@@ -145,19 +148,6 @@ namespace AngryElectron.Domain
         {
             get { return contents[i]; }
             set { contents[i] = value; }
-        }
-
-
-
-        public double Mass
-        {
-            get
-            {
-                double mass = 0;
-                foreach (IChemical chemical in contents)
-                    mass += chemical.Mass;
-                return mass;
-            }
         }
     }
 }

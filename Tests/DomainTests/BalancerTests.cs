@@ -74,5 +74,13 @@ namespace AngryElectron.Tests.Domain
             myEquation = myBalancer.Balance(myEquation);
             Assert.IsTrue(myEquation.ToString() == "CaCl2 + 2Ag(NO3) -> Ca(NO3)2 + 2AgCl");
         }
+
+        [TestMethod]
+        public void IsBalancedTest()
+        {
+            myEquation = myParser.Parse("FeS2 + O2 -> Fe2O3 + SO2");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.IsBalanced);
+        }
     }
 }

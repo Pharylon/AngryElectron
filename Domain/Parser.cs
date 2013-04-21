@@ -14,6 +14,7 @@ namespace AngryElectron.Domain
         {
             string[] symbolArray = createSymbolArray(inputString);
             ChemicalEquation myChemicalEquation = convertArrayToEquation(symbolArray);
+            checkForValidEquation(myChemicalEquation);
             return myChemicalEquation;  
         }
 
@@ -32,7 +33,7 @@ namespace AngryElectron.Domain
                         parsingSide = Side.RightSide;
                 }
                 else
-                    moleculeString.Add(symbolArray[i]); //If we didn't find an "end of molecule" operator, the symbol is added to moleculeString. 
+                    moleculeString.Add(symbolArray[i]); //If we didn't find an "end of molecule" operator, the symbol is added to moleculeString to be processed when we do find one. 
             }
             return myChemicalEquation;
         }
@@ -95,6 +96,15 @@ namespace AngryElectron.Domain
             inputString = inputString.Replace("]", ")");
             inputString = inputString.Replace("=", ">");
             return inputString;
+        }
+
+        private void checkForValidEquation(ChemicalEquation unbalancedEquation)
+        {
+            foreach (Element e in unbalancedEquation.ListOfElements)
+            {
+                if (!unbalancedEquation.Products.ListOfElements.Contains(e) || !unbalancedEquation.Reactants.ListOfElements.Contains(e))
+                    throw new ArgumentException("Error: the element or complex " + e.ToString() + " could not be found on both sides of the equation");
+            }
         }
     }
 }

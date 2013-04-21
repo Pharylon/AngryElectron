@@ -14,10 +14,16 @@ namespace AngryElectron.Domain
     {
         public ChemicalEquation Balance(ChemicalEquation myEquation)
         {
-            checkForValidEquation(myEquation);
             List<int> coefficients = solveMatrix(myEquation);
             addCoefficients(coefficients, myEquation);
+            finalSanityCheck(myEquation);
             return myEquation;
+        }
+
+        private void finalSanityCheck(ChemicalEquation myEquation)
+        {
+            if (!myEquation.IsBalanced)
+                throw new Exception("Error: Blancer failed to balance the equation!");
         }
 
         private void addCoefficients(List<int> answers, ChemicalEquation unbalancedEquation)
@@ -28,12 +34,12 @@ namespace AngryElectron.Domain
                 if (i < unbalancedEquation.Reactants.Count)
                 {
                     currentChemical = unbalancedEquation.Reactants[i];
-                    unbalancedEquation.Reactants.Coefficients[currentChemical.ToString()] = answers[i];
+                    unbalancedEquation.Reactants.Coefficients[currentChemical] = answers[i];
                 }
                 else
                 {
                     currentChemical = unbalancedEquation.Products[i - unbalancedEquation.Reactants.Count];
-                    unbalancedEquation.Products.Coefficients[currentChemical.ToString()] = answers[i];
+                    unbalancedEquation.Products.Coefficients[currentChemical] = answers[i];
                 }
             }
         }
@@ -94,7 +100,7 @@ namespace AngryElectron.Domain
         {
             for (int i = 0; i < vector.Count; i++)
             {
-                if (vector[i] != 0)
+                if (vector[i] != 0) //to solve for the vector, we need to find a row where it wasn't zero.
                 {
                     double answer = 0;
                     for (int n = 0; n < unsolvedMatrix.ColumnCount; n++)
@@ -145,20 +151,25 @@ namespace AngryElectron.Domain
 
         private double getMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<Element> listOfElements)
         {
-            double matrixPoint = 0;
             EquationSide currentSide = setCurrentProcessingSide(unbalancedEquation, processingSide);
             if (processingSide == Side.RightSide)
                 column -= unbalancedEquation.Reactants.Count;
-            if (currentSide[column] is ChemicalGroup)
+            double matrixPoint = getElementCountOfChemical(column, row, listOfElements, currentSide);
+            if (processingSide == Side.RightSide)
+                matrixPoint *= -1.0;
+            return matrixPoint;
+        }
+
+        private static double getElementCountOfChemical(int column, int row, List<Element> listOfElements, EquationSide currentSide)
+        {
+            double matrixPoint = 0;
+            if (currentSide[column] == listOfElements[row]) //check to see if the current column is a single instance of the element we are searching for.
+                matrixPoint = 1.0;
+            else if (currentSide[column] is ChemicalGroup)
             {
                 ChemicalGroup currentMolecule = (ChemicalGroup)currentSide[column];
                 matrixPoint = currentMolecule.GetDeepElementCount(listOfElements[row]);
             }
-            else
-                if (currentSide[column].ToString() == listOfElements[row].ToString())
-                    matrixPoint = 1.0;
-            if (processingSide == Side.RightSide)
-                matrixPoint *= -1.0;
             return matrixPoint;
         }
 
@@ -170,15 +181,6 @@ namespace AngryElectron.Domain
             else
                 currentSide = unbalancedEquation.Products;
             return currentSide;
-        }
-
-        private void checkForValidEquation(ChemicalEquation unbalancedEquation)
-        {
-            foreach (Element e in unbalancedEquation.ListOfElements)
-            {
-                if (!unbalancedEquation.Products.ListOfElements.Contains(e) || !unbalancedEquation.Reactants.ListOfElements.Contains(e))
-                    throw new ArgumentException("Error: the element or complex " + e.ToString() + " could not be found on both sides of the equation");
-            }
         }
     }
 }
