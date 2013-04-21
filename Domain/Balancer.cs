@@ -20,6 +20,15 @@ namespace AngryElectron.Domain
             return myEquation;
         }
 
+        private List<int> solveMatrix(ChemicalEquation unbalancedEquation)
+        {
+            DenseMatrix unsolvedMatrix = buildMatrix(unbalancedEquation);
+            DenseVector vector = buildVector(unbalancedEquation);
+            List<double> answers = MatrixSolver.Solve(unsolvedMatrix, vector);
+            List<int> coefficients = convertAnswersToIntegers(answers);
+            return coefficients;
+        }
+
         private void finalSanityCheck(ChemicalEquation myEquation)
         {
             if (!myEquation.IsBalanced)
@@ -42,80 +51,8 @@ namespace AngryElectron.Domain
                     unbalancedEquation.Products.Coefficients[currentChemical] = answers[i];
                 }
             }
-        }
-
-        private List<int> solveMatrix(ChemicalEquation unbalancedEquation)
-        {
-            DenseMatrix unsolvedMatrix = buildMatrix(unbalancedEquation);
-            DenseVector vector = buildVector(unbalancedEquation);
-            List<double> answers = new List<double>();
-            var matrixAnswers = unsolvedMatrix.QR().Solve(vector);
-            foreach (double d in matrixAnswers)
-                answers.Add(d);
-            answers.Add(solveForZ(unsolvedMatrix, vector, matrixAnswers));
-            List<int> coefficients = convertAnswersToIntegers(answers);
-            return coefficients;
-        }
-
-        private List<int> convertAnswersToIntegers(List<double> answers)
-        {
-            List<int> coefficients = new List<int>();
-            int numberToMultiplyBy = 1;
-            while (numberToMultiplyBy < 10000)
-            {
-                List<double> checkList = multiplyAnswers(answers, numberToMultiplyBy);
-
-                if (checkAllAnswersAreIntegers(checkList))
-                {
-                    foreach (double d in checkList)
-                        coefficients.Add((int)d);
-                    return coefficients;
-                }
-                else
-                    numberToMultiplyBy++;
-            }
-            throw new ArgumentException("Error: Could not determine integer values of coefficients");
-        }
-
-        private static List<double> multiplyAnswers(List<double> answers, int numberToMultiplyBy)
-        {
-            List<double> checkList = new List<double>(answers);
-            for (int i = 0; i < checkList.Count; i++)
-            {
-                checkList[i] *= numberToMultiplyBy;
-                checkList[i] = Math.Round(checkList[i], 10);
-            }
-            return checkList;
-        }
-
-        private bool checkAllAnswersAreIntegers(List<double> checkList)
-        {
-            foreach (double d in checkList)
-                if (d % 1 != 0)
-                    return false;
-            return true;
-        }
-
-        private static double solveForZ(DenseMatrix unsolvedMatrix, DenseVector vector, MathNet.Numerics.LinearAlgebra.Generic.Vector<double> matrixAnswers)
-        {
-            for (int i = 0; i < vector.Count; i++)
-            {
-                if (vector[i] != 0) //to solve for the vector, we need to find a row where it wasn't zero.
-                {
-                    double answer = 0;
-                    for (int n = 0; n < unsolvedMatrix.ColumnCount; n++)
-                    {
-                        double matrixNumber = unsolvedMatrix[i, n];
-                        double multipliedBy = matrixAnswers[n];
-                        answer += matrixNumber * multipliedBy;
-                    }
-                    answer /= vector[i];
-                    return answer;
-                }
-            }
-            throw new ArgumentException("Balancer Error: Could not solve for z");
-        }
-
+        }        
+        
         private DenseVector buildVector(ChemicalEquation unbalancedEquation)
         {
             DenseVector vector = new DenseVector(unbalancedEquation.ListOfElements.Count);
@@ -181,6 +118,45 @@ namespace AngryElectron.Domain
             else
                 currentSide = unbalancedEquation.Products;
             return currentSide;
+        }
+
+        private static List<int> convertAnswersToIntegers(List<double> answers)
+        {
+            List<int> coefficients = new List<int>();
+            int numberToMultiplyBy = 1;
+            while (numberToMultiplyBy < 10000)
+            {
+                List<double> checkList = multiplyAnswers(answers, numberToMultiplyBy);
+
+                if (checkAllAnswersAreIntegers(checkList))
+                {
+                    foreach (double d in checkList)
+                        coefficients.Add((int)d);
+                    return coefficients;
+                }
+                else
+                    numberToMultiplyBy++;
+            }
+            throw new ArgumentException("Error: Could not determine integer values of coefficients");
+        }
+
+        private static bool checkAllAnswersAreIntegers(List<double> checkList)
+        {
+            foreach (double d in checkList)
+                if (d % 1 != 0)
+                    return false;
+            return true;
+        }
+
+        private static List<double> multiplyAnswers(List<double> answers, int numberToMultiplyBy)
+        {
+            List<double> checkList = new List<double>(answers);
+            for (int i = 0; i < checkList.Count; i++)
+            {
+                checkList[i] *= numberToMultiplyBy;
+                checkList[i] = Math.Round(checkList[i], 10);
+            }
+            return checkList;
         }
     }
 }

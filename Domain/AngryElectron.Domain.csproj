@@ -51,18 +51,19 @@
   <ItemGroup>
     <Compile Include="Balancer.cs" />
     <Compile Include="ChemicalEquation.cs" />
-    <Compile Include="ElementGroup Classes\Complex.cs" />
+    <Compile Include="ChemicalGroupClasses\Complex.cs" />
     <Compile Include="Element.cs" />
-    <Compile Include="ElementGroup Classes\ChemcialGroup.cs" />
+    <Compile Include="ChemicalGroupClasses\ChemcialGroup.cs" />
     <Compile Include="ChemicalGroupBuilder.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="ElementGroup Classes\EquationSide.cs" />
+    <Compile Include="ChemicalGroupClasses\EquationSide.cs" />
     <Compile Include="Interfaces\IBalancer.cs" />
     <Compile Include="Interfaces\IChemical.cs" />
     <Compile Include="Interfaces\IComplexContent.cs" />
     <Compile Include="Interfaces\IMoleculeContent.cs" />
     <Compile Include="Interfaces\IParser.cs" />
-    <Compile Include="ElementGroup Classes\Molecule.cs" />
+    <Compile Include="ChemicalGroupClasses\Molecule.cs" />
+    <Compile Include="MatrixSolver.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controller.cs" />
