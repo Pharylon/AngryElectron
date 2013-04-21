@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class Complex : ChemicalGroup , IComplexContent, IMoleculeContent
+    class Complex : ChemicalGroup, IComplexContent, IMoleculeContent
     {
         public override void Add(IChemical chemical)
         {

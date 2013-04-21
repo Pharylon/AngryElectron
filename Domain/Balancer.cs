@@ -118,8 +118,6 @@ namespace AngryElectron.Domain
 
         private DenseVector buildVector(ChemicalEquation unbalancedEquation)
         {
-            ElementGroup products = (ElementGroup)unbalancedEquation.Products;
-            ElementGroup lastMolecule = (ElementGroup)products[products.Count - 1];
             DenseVector vector = new DenseVector(unbalancedEquation.ListOfElements.Count);
             for (int i = 0; i < unbalancedEquation.ListOfElements.Count; i++)
             {

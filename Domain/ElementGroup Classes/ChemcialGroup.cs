@@ -9,6 +9,7 @@ namespace AngryElectron.Domain
     public abstract class ChemicalGroup : IChemical, IEnumerator<IChemical>, IEnumerable<IChemical>
     {
         protected List<IChemical> contents = new List<IChemical>();
+
         protected Dictionary<string, Element> dictionaryOfElements;
 
         public ChemicalGroup()
@@ -48,7 +49,7 @@ namespace AngryElectron.Domain
                     if (!listOfContents.Contains(chemical))
                         listOfContents.Add(chemical);
                 }
-                return contents;
+                return listOfContents;
             }
         }
 

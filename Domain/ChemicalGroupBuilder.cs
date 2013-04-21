@@ -30,7 +30,7 @@ namespace AngryElectron.Domain
             for (int i = 0; i < stringList.Count; i++)
             {
                 chemical = turnStringIntoMoleculeOrComplex(stringList, ref i);
-                if (chemical != null)   
+                if (chemical != null)
                 {
                     int subscript = setSubscript(stringList, i);
                     addChemicalToChemicalGroup(myChemicalGroup, chemical, subscript);
@@ -88,7 +88,7 @@ namespace AngryElectron.Domain
         public void checkForErrors(List<string> stringList, int i)
         {
             int x;  //We don't use x for anything, but TryParse() requires an out operator.
-            if (int.TryParse(stringList[i], out x)) 
+            if (int.TryParse(stringList[i], out x))
             {
                 if (i == 0 && stringList.Count > 1)  //Numbers shouldn't appear at the start of the molecule, since we're trying to balance it.
                     throw new ArgumentException("Parser found unexpected number at: " + stringList[i].ToString() + stringList[i + 1].ToString());

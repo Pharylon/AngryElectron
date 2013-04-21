@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public delegate void EquationDelegate(IChemical symbol, Side side);
-
     public class ChemicalEquation
     {
         public EquationSide Reactants = new EquationSide();
@@ -54,6 +52,7 @@ namespace AngryElectron.Domain
         {
             return Products.GetDeepElementCount(element) + Reactants.GetDeepElementCount(element);
         }
+
         public bool IsBalanced
         {
             get
