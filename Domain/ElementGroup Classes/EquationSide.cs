@@ -20,7 +20,7 @@ namespace AngryElectron.Domain
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < contents.Count; i++)
+            for (int i = 0; i < this.Count; i++)
             {
                 if (Coefficients[contents[i]] > 1)
                     sb.Append(Coefficients[contents[i]].ToString());
@@ -34,7 +34,7 @@ namespace AngryElectron.Domain
         public override string ToHTML()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < contents.Count; i++)
+            for (int i = 0; i < this.Count; i++)
             {
                 if (Coefficients[contents[i]] > 1)
                     sb.Append(Coefficients[contents[i]].ToString());
