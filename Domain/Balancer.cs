@@ -14,13 +14,13 @@ namespace AngryElectron.Domain
     {
         public ChemicalEquation Balance(ChemicalEquation myEquation)
         {
-            List<int> coefficients = solveMatrix(myEquation);
+            List<int> coefficients = getCoefficients(myEquation);
             addCoefficients(coefficients, myEquation);
             finalSanityCheck(myEquation);
             return myEquation;
         }
 
-        private List<int> solveMatrix(ChemicalEquation unbalancedEquation)
+        private List<int> getCoefficients(ChemicalEquation unbalancedEquation)
         {
             DenseMatrix unsolvedMatrix = buildMatrix(unbalancedEquation);
             DenseVector vector = buildVector(unbalancedEquation);
@@ -112,12 +112,10 @@ namespace AngryElectron.Domain
 
         private static EquationSide setCurrentProcessingSide(ChemicalEquation unbalancedEquation, Side processingSide)
         {
-            EquationSide currentSide;
             if (processingSide == Side.LeftSide)
-                currentSide = unbalancedEquation.Reactants;
+                return unbalancedEquation.Reactants;
             else
-                currentSide = unbalancedEquation.Products;
-            return currentSide;
+                return unbalancedEquation.Products;
         }
 
         private static List<int> convertAnswersToIntegers(List<double> answers)

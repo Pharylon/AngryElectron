@@ -27,7 +27,7 @@ namespace AngryElectron.Domain
             {
                 if (symbolArray[i] == "+" || symbolArray[i] == ">" || symbolArray[i] == "|")  //Finding one of these operators tells us we're at the end of a molecule.
                 {
-                    myChemicalEquation.AddToEquation(myBuilder.buildChemicalGroup(moleculeString, false), parsingSide);
+                    myChemicalEquation.Add(myBuilder.buildChemicalGroup(moleculeString, false), parsingSide);
                     moleculeString = new List<string>(); //reset for the next loop
                     if (symbolArray[i] == ">")
                         parsingSide = Side.RightSide;

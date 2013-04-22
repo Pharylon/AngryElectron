@@ -12,17 +12,10 @@ namespace AngryElectron.Domain
         public EquationSide Products = new EquationSide();
 
         public int MoleculeCount { get { return Reactants.Count + Products.Count; } }
+        public bool IsBalanced { get { return (Reactants.Mass == Products.Mass); } }
+        public List<Element> ListOfElements { get { return Reactants.ListOfElements.Union(Products.ListOfElements).ToList(); } }
 
-        public List<Element> ListOfElements
-        {
-            get
-            {
-                List<Element> listOfElements = Reactants.ListOfElements.Union(Products.ListOfElements).ToList();
-                return listOfElements;
-            }
-        }
-
-        public void AddToEquation(IChemical chemical, Side side)
+        public void Add(IChemical chemical, Side side)
         {
             if (side == Side.LeftSide)
                 Reactants.Add(chemical);
@@ -51,17 +44,6 @@ namespace AngryElectron.Domain
         public int GetDeepElementCount(Element element)
         {
             return Products.GetDeepElementCount(element) + Reactants.GetDeepElementCount(element);
-        }
-
-        public bool IsBalanced
-        {
-            get
-            {
-                if (Reactants.Mass == Products.Mass)
-                    return true;
-                else
-                    return false;
-            }
         }
     }
 }
