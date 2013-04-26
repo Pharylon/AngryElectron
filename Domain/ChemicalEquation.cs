@@ -11,6 +11,18 @@ namespace AngryElectron.Domain
         public EquationSide Reactants = new EquationSide();
         public EquationSide Products = new EquationSide();
 
+        public ChemicalEquation(string inputString)
+        {
+            Parser myParser = new Parser();
+            ChemicalEquation myEquation = myParser.Parse(inputString);
+            Reactants = myEquation.Reactants;
+            Products = myEquation.Products;
+        }
+
+        public ChemicalEquation()
+        {
+        }
+
         public int MoleculeCount { get { return Reactants.Count + Products.Count; } }
         public bool IsBalanced { get { return (Reactants.Mass == Products.Mass); } }
         public List<Element> ListOfElements { get { return Reactants.ListOfElements.Union(Products.ListOfElements).ToList(); } }

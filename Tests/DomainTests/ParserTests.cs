@@ -10,7 +10,12 @@ namespace AngryElectron.Tests.Domain
         Parser SideParser = new Parser();
         ChemicalEquation SideEquation;
 
-
+        [TestMethod]
+        public void InitializeEquationUsingStringConstructor()
+        {
+            ChemicalEquation myEquation = new ChemicalEquation("FeS2 + O2 -> Fe2O3 + SO2");
+            Assert.IsTrue("FeS2 + O2 -> Fe2O3 + SO2" == myEquation.ToString());
+        }
 
         //[TestMethod]
         //public void EquationCanParseOneSideTest()
