@@ -63,6 +63,7 @@
     <Compile Include="Interfaces\IMoleculeContent.cs" />
     <Compile Include="Interfaces\IParser.cs" />
     <Compile Include="ChemicalGroupClasses\Molecule.cs" />
+    <Compile Include="Isotope.cs" />
     <Compile Include="MatrixSolver.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
