@@ -11,7 +11,8 @@ namespace AngryElectron.Domain
 {
     public class TableOfElements : List<Element>
     {
-        private const string _tableOfElementsFilePath = @"Data\TableOfElements.json";
+        private string _tableOfElementsFilePath = @"C:\Users\Patrick\Projects\AngryElectron\Domain\Data\TableOfElements.json";
+        //Path _tableOfElementsPath = Path.GetDirectoryName("hello");
         public TableOfElements()
         {
             initializeTableOfElements(_tableOfElementsFilePath);
@@ -33,9 +34,7 @@ namespace AngryElectron.Domain
 
         private void initializeTableOfElements(string path)
         {
-            StreamReader streamReader = new StreamReader(path);
             this.AddRange(JsonConvert.DeserializeObject<List<Element>>(Json));
-            streamReader.Close();
         }
         
         public void Save()

@@ -8,6 +8,16 @@ namespace AngryElectron.Domain
 {
     public class EquationSide : ChemicalGroup
     {
+
+        public EquationSide(string equationSide)
+        {
+
+        }
+
+        public EquationSide()
+        {
+        }
+
         public Dictionary<IChemical, int> Coefficients = new Dictionary<IChemical, int>();
 
         public override void Add(IChemical chemical)
@@ -15,7 +25,6 @@ namespace AngryElectron.Domain
             Coefficients.Add(chemical, 1);
             base.Add(chemical);
         }
-
 
         public override string ToString()
         {

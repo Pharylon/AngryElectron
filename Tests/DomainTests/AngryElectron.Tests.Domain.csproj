@@ -53,6 +53,7 @@
     <Compile Include="TableOfElementsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BalancerTests.cs" />
+    <Compile Include="EquationSideTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\AngryElectron.Domain.csproj">

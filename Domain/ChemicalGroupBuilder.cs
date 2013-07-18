@@ -84,7 +84,7 @@ namespace AngryElectron.Domain
             else
                 return null;
         }
-
+        
         public void checkForErrors(List<string> stringList, int i)
         {
             int x;  //We don't use x for anything, but TryParse() requires an out operator.

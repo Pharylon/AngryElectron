@@ -68,6 +68,8 @@ namespace AngryElectron.Presentation.Web
                         "~/Scripts/jquery.tagsmanager.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/layout").Include("~/Scripts/jquery-{version}.js", "~/Scripts/bootstrap.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/angryElectron").IncludeDirectory("~/Scripts/AngryElectron","*.js"));
         }
     }
 }

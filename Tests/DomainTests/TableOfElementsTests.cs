@@ -49,5 +49,14 @@ namespace AngryElectron.Tests.Domain
             Assert.IsNotNull(myElements.Json);
             Trace.Write(myElements.Json);
         }
+        [TestMethod]
+        public void GetEnumClass()
+        {
+            foreach(Element element in myElements)
+            {
+                element 
+            }
+        }
+
     }
 }

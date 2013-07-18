@@ -326,6 +326,9 @@
     <Content Include="Content\themes\base\minified\jquery.ui.spinner.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="Content\bootstrap-tagmanager.css" />
+    <Content Include="Scripts\AngryElectron\ChemicalEquation.js" />
+    <Content Include="Scripts\AngryElectron\ChemicalEquationParser.js" />
+    <Content Include="Scripts\AngryElectron\Tests.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\DataTables-1.9.4\docs\media\js\doc.js" />
@@ -412,6 +415,7 @@
     <Content Include="App_Data\TableOfElements.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\AngryElectron\stoichiometry-calculator.index.js" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
