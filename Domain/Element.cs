@@ -10,7 +10,7 @@ namespace AngryElectron.Domain
     {
         public string Symbol { get; set; }
         public int AtomicNumber { get; set; }
-        public double AtomicMass { get; set; }
+        public virtual double AtomicMass { get; set; }
         public string Name { get; set; }
 
         public bool Equals(Element other)
