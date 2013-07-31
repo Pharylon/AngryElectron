@@ -1,17 +1,64 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "StoichiometryCalculator";
 }
-<h1>Project Angry Electron</h1>
-<h2></h2>
-<p>
-<q>Around the world almost all students learn traditional
-hand- calculating not computer-based math. Sometimes it’s
-“computer-assisted,” that is, applying some of the new
-modalities to the traditional subject. That’s holding them
-and their countries back from more creative, conceptual
-math. Indeed a larger and larger chasm is opening up
-between math for the real world and math in education.
-Technology isn’t an optional extra for math, it’s
-fundamental to the mainstream subject of today. - Conrad Wolfram</q>
-    
-</p>
+@section styles{
+    @Styles.Render("~/Content/tagsManager")
+}
+
+
+<h2>Stoichiometry Calculator</h2>
+<form id="single-field-entry" action="@Url.Content("~/Home/GetBalancedEquation")">
+  <fieldset>
+    <legend>Single Field Entry for Chemical Equation </legend>    
+        <div class="span12">
+            <label>Equation</label> 
+            <input type="text" name="unbalancedEquation" id="unbalanced-equation" placeholder="Enter full equation here..."/>
+            <button id="btn-balance-equation" class="btn btn-primary" type="button"> Balance</button>
+            <label>Balanced Equation</label> 
+            <div id="balanced-equation-result"></div>
+        </div>
+
+    </fieldset>
+</form>
+@*@for (int i = 0; i < 4; i++ )
+{
+    for (int j = 0; j< 8; j++){
+        <button class ="btn" style="margin:3px;">Aa</button>
+    }
+    <br />
+}*@
+
+@*<form id="divided-entry">
+  <fieldset>
+    <legend>Divided Entry for Chemical Equation</legend>
+    <div id="reaction-input" class="row-fluid">
+        <div class="span6">
+            <label>Reactants</label> 
+            <input type="text" name="reactants" placeholder="Reactants" class="tagManager"/>
+        </div>
+        <div class="span6">
+            <label>Products</label> 
+            <input type="text" name="products" placeholder="Products" class="anotherTagManager"/>
+        </div>
+    </div>
+</div>
+      <fieldset id="josh-design">
+          <legend>Josh's Design</legend>
+          <div class="row-fluid">
+              <div class="span6 reactants-side">
+                  <label>Reactants</label>
+                  <input type="text" /> +
+                  <input type ="text">
+              </div>
+              &rarr;
+              <div class="span6 products-side">
+                  <label>Products</label>
+                  <input type="text" /> +
+                  <input type ="text">
+              </div>
+          </div>
+      </fieldset>*@
+@section scripts{
+    @Scripts.Render("~/bundles/tagsManager")
+    @Scripts.Render("~/bundles/angryElectron")
+}

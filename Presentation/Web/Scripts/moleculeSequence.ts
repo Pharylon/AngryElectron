@@ -2,7 +2,7 @@
 module moleculeSequence {
 
     // Class
-    export class Point implements IPoint {
+    export class Point {
         // Constructor
         constructor (public x: number, public y: number) { }
 

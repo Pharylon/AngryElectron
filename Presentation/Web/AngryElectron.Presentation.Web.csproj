@@ -171,7 +171,6 @@
     <Compile Include="Controllers\PeriodicTableController.cs" />
     <Compile Include="Controllers\ResourcesController.cs" />
     <Compile Include="Controllers\SignUpController.cs" />
-    <Compile Include="Controllers\StoichiometryCalculatorController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -371,12 +370,18 @@
     <Content Include="Scripts\DataTables-1.9.4\media\js\jquery.dataTables.js" />
     <Content Include="Scripts\DataTables-1.9.4\media\js\jquery.dataTables.min.js" />
     <Content Include="Scripts\DataTables-1.9.4\media\js\jquery.js" />
+    <Content Include="Scripts\jquery-1.9.1.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
     <Content Include="Scripts\jquery-ui-1.10.2.js" />
     <Content Include="Scripts\jquery-ui-1.10.2.min.js" />
     <Content Include="Scripts\jquery.tagsmanager.js" />
     <Content Include="Scripts\jquery.tagsmanager.min.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\moleculeSequence.js">
+      <DependentUpon>moleculeSequence.ts</DependentUpon>
+    </Content>
+    <Content Include="Scripts\moleculeSequence.min.js">
+      <DependentUpon>moleculeSequence.ts</DependentUpon>
+    </Content>
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\StoichiometryCalculator\Index.cshtml" />
     <Content Include="Views\PeriodicTable\Index.cshtml" />
@@ -384,6 +389,7 @@
     <Content Include="Views\MolecularProperties\Index.cshtml" />
     <Content Include="Views\SignUp\Index.cshtml" />
     <Content Include="Views\Shared\TableOfElements.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
     <TypeScriptCompile Include="Scripts\moleculeSequence.ts" />
     <Content Include="Scripts\molecule-sequence.js">
       <DependentUpon>moleculeSequence.ts</DependentUpon>
@@ -416,18 +422,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\AngryElectron\stoichiometry-calculator.index.js" />
-    <None Include="Scripts\jquery-1.9.1.intellisense.js" />
-    <Content Include="Scripts\jquery-1.9.1.js" />
-    <Content Include="Scripts\jquery-1.9.1.min.js" />
-    <Content Include="Scripts\jquery-1.9.1.min.map" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <None Include="Properties\PublishProfiles\angryelectron - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\angryelectron - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\angryelectron - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\angryelectron - Web Deploy.pubxml" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\knockout-2.2.1.debug.js" />
     <Content Include="Scripts\knockout-2.2.1.js" />
-    <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -459,9 +461,6 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
@@ -498,7 +497,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>17903</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:29249/</IISUrl>
+          <IISUrl>http://localhost:6022/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
