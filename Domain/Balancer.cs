@@ -10,9 +10,9 @@ using System.Numerics;
 
 namespace AngryElectron.Domain
 {
-    public class Balancer : IBalancer
+    public static class Balancer
     {
-        public ChemicalEquation Balance(ChemicalEquation myEquation)
+        public static ChemicalEquation Balance(ChemicalEquation myEquation)
         {
             bool equationFlipped = PrepareEquationForProcessing(myEquation); //For some reason, the Matrix solving is failing when all the products have a subscript of 1. This is a HACK to fix this issue.
             List<int> coefficients = getCoefficients(myEquation);
@@ -25,7 +25,7 @@ namespace AngryElectron.Domain
             return myEquation;
         }
 
-        private bool PrepareEquationForProcessing(ChemicalEquation myEquation) 
+        private static bool PrepareEquationForProcessing(ChemicalEquation myEquation) 
         {   
             bool AllProductsHaveSubscriptOf1 = true;
             ChemicalGroup cg = (ChemicalGroup)myEquation.Products;
@@ -41,14 +41,14 @@ namespace AngryElectron.Domain
             return AllProductsHaveSubscriptOf1;
         }
 
-        private void FlipEquation(ChemicalEquation myEquation)
+        private static void FlipEquation(ChemicalEquation myEquation)
         {
             EquationSide placeHolder = myEquation.Reactants;
             myEquation.Reactants = myEquation.Products;
             myEquation.Products = placeHolder;
         }
 
-        private List<int> getCoefficients(ChemicalEquation unbalancedEquation)
+        private static List<int> getCoefficients(ChemicalEquation unbalancedEquation)
         {
             DenseMatrix unsolvedMatrix = buildMatrix(unbalancedEquation);
             DenseVector vector = buildVector(unbalancedEquation);
@@ -57,13 +57,13 @@ namespace AngryElectron.Domain
             return coefficients;
         }
 
-        private void finalSanityCheck(ChemicalEquation myEquation)
+        private static void finalSanityCheck(ChemicalEquation myEquation)
         {
             if (!myEquation.IsBalanced)
                 throw new Exception("Error: Blancer failed to balance the equation!");
         }
 
-        private void addCoefficients(List<int> answers, ChemicalEquation unbalancedEquation)
+        private static void addCoefficients(List<int> answers, ChemicalEquation unbalancedEquation)
         {
             IChemical currentChemical;
             for (int i = 0; i < unbalancedEquation.MoleculeCount; i++)
@@ -79,9 +79,9 @@ namespace AngryElectron.Domain
                     unbalancedEquation.Products.Coefficients[currentChemical] = answers[i];
                 }
             }
-        }        
-        
-        private DenseVector buildVector(ChemicalEquation unbalancedEquation)
+        }
+
+        private static DenseVector buildVector(ChemicalEquation unbalancedEquation)
         {
             DenseVector vector = new DenseVector(unbalancedEquation.ListOfElements.Count);
             for (int i = 0; i < unbalancedEquation.ListOfElements.Count; i++)
@@ -97,7 +97,7 @@ namespace AngryElectron.Domain
             return vector;
         }
 
-        private DenseMatrix buildMatrix(ChemicalEquation unbalancedEquation)
+        private static DenseMatrix buildMatrix(ChemicalEquation unbalancedEquation)
         {
             List<Element> listOfElements = unbalancedEquation.ListOfElements;
             Side processingSide = Side.LeftSide;
@@ -114,7 +114,7 @@ namespace AngryElectron.Domain
             return myMatrix;
         }
 
-        private double getMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<Element> listOfElements)
+        private static double getMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<Element> listOfElements)
         {
             EquationSide currentSide = setCurrentProcessingSide(unbalancedEquation, processingSide);
             if (processingSide == Side.RightSide)

@@ -13,8 +13,7 @@ namespace AngryElectron.Domain
 
         public ChemicalEquation(string inputString)
         {
-            Parser myParser = new Parser();
-            ChemicalEquation myEquation = myParser.Parse(inputString);
+            ChemicalEquation myEquation = Parser.Parse(inputString);
             Reactants = myEquation.Reactants;
             Products = myEquation.Products;
         }
@@ -24,7 +23,7 @@ namespace AngryElectron.Domain
         }
 
         public int MoleculeCount { get { return Reactants.Count + Products.Count; } }
-        public bool IsBalanced { get { return (Reactants.Mass == Products.Mass); } }
+        public bool IsBalanced { get { return (Math.Round(Reactants.Mass, 4) == Math.Round(Products.Mass, 4)); } }
         public List<Element> ListOfElements { get { return Reactants.ListOfElements.Union(Products.ListOfElements).ToList(); } }
 
         public void Add(IChemical chemical, Side side)

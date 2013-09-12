@@ -18,14 +18,19 @@ namespace AngryElectron.Presentation.Web.Controllers
 
         public string GetBalancedEquation(string unbalancedEquation)
         {
-            Balancer myBalancer;
             ChemicalEquation myEquation;
-            Parser myParser;
-            myBalancer = new Balancer();
-            myParser = new Parser();
-            myEquation = myParser.Parse(unbalancedEquation);
-            myEquation = myBalancer.Balance(myEquation);
-            return myEquation.ToHTML();
+            string returnString = string.Empty;
+            try
+            {
+                myEquation = Parser.Parse(unbalancedEquation);
+                myEquation = Balancer.Balance(myEquation);
+                returnString = myEquation.ToHTML();
+            }
+            catch (Exception ex)
+            {
+                returnString = ex.Message;
+            }
+            return returnString;
         }
     }
 }

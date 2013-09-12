@@ -13,7 +13,7 @@ namespace AngryElectron.Tests.Domain
         [TestInitialize]
         public void initialize()
         {
-            MyElements = new TableOfElements();
+            MyElements = TableOfElements.Instance;
         }
         [TestMethod]
         public void IsotopeReturnsAtomicMassItWasCreatedWith()

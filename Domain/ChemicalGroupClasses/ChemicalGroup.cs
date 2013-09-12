@@ -55,7 +55,7 @@ namespace AngryElectron.Domain
 
         private void initializeDictionaryOfElements()
         {
-            TableOfElements tableOfElements = new TableOfElements();
+            TableOfElements tableOfElements = TableOfElements.Instance;
             dictionaryOfElements = new Dictionary<string, Element>();
             foreach (Element element in tableOfElements)
                 dictionaryOfElements.Add(element.Symbol, element);

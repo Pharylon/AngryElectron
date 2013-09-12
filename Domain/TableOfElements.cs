@@ -9,16 +9,23 @@ using System.Runtime.Serialization;
 
 namespace AngryElectron.Domain
 {
-    public class TableOfElements : List<Element>
+    public sealed class TableOfElements : List<Element>
     {
-        private string _tableOfElementsFilePath = @"C:\Misc\TableOfElements.json";
+        //These two lines combine to make the TableOfElements a lazily-constructed Singleton and avoid the expensive process
+        //of calling the constructor over and over. Or at least, what will be expensive once it's reading
+        //from a database instead of a json. Info here: http://csharpindepth.com/Articles/General/Singleton.aspx
+        private static readonly Lazy<TableOfElements> lazy = new Lazy<TableOfElements>(() => new TableOfElements());
+        public static TableOfElements Instance { get { return lazy.Value; } }
+
+
+        string path = AppDomain.CurrentDomain.BaseDirectory + @"\App_Data\TableOfElements.json";
         //Path _tableOfElementsPath = Path.GetDirectoryName("hello");
-        public TableOfElements()
+        private TableOfElements()
         {
-            initializeTableOfElements(_tableOfElementsFilePath);
+            initializeTableOfElements(path);
         }
 
-        public TableOfElements(string path)
+        private TableOfElements(string path)
         {
             initializeTableOfElements(path);
         }
@@ -28,7 +35,7 @@ namespace AngryElectron.Domain
             get
             {
                 
-                StreamReader streamReader = new StreamReader(_tableOfElementsFilePath);
+                StreamReader streamReader = new StreamReader(path);
                 return streamReader.ReadToEnd().ToString();
             }
         }
@@ -40,7 +47,7 @@ namespace AngryElectron.Domain
         
         public void Save()
         {
-            File.WriteAllText(_tableOfElementsFilePath, JsonConvert.SerializeObject(this));
+            File.WriteAllText(path, JsonConvert.SerializeObject(this));
         }
         public string getFilePath()
         {

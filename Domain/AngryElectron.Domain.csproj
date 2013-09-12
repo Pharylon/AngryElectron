@@ -58,11 +58,9 @@
     <Compile Include="Elements.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ChemicalGroupClasses\EquationSide.cs" />
-    <Compile Include="Interfaces\IBalancer.cs" />
     <Compile Include="Interfaces\IChemical.cs" />
     <Compile Include="Interfaces\IComplexContent.cs" />
     <Compile Include="Interfaces\IMoleculeContent.cs" />
-    <Compile Include="Interfaces\IParser.cs" />
     <Compile Include="ChemicalGroupClasses\Molecule.cs" />
     <Compile Include="Isotope.cs" />
     <Compile Include="MatrixSolver.cs" />
@@ -78,7 +76,7 @@
     <Content Include="App_Readme\MathNet.Numerics.authors.txt" />
     <Content Include="App_Readme\MathNet.Numerics.copyright.txt" />
     <Content Include="App_Readme\MathNet.Numerics.readme.txt" />
-    <Content Include="Data\TableOfElements.json">
+    <Content Include="App_Data\TableOfElements.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

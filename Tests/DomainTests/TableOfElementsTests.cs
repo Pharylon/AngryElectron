@@ -17,7 +17,7 @@ namespace AngryElectron.Tests.Domain
         [TestInitialize]
         public void Initialize()
         {
-            myElements = new TableOfElements();
+            myElements = TableOfElements.Instance;
         }
 
         [TestMethod]

@@ -6,37 +6,22 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class ChemicalGroupBuilder
+    static class ChemicalGroupBuilder
     {
-        Dictionary<string, Element> dictionaryOfElements;
-
-        public ChemicalGroupBuilder()
+        public static IChemical BuildChemicalGroup(List<string> stringList, bool isComplex)
         {
-            initializeDictionaryOfElements();
-        }
-
-        private void initializeDictionaryOfElements()
-        {
-            TableOfElements tableOfElements = new TableOfElements();
-            dictionaryOfElements = new Dictionary<string, Element>();
-            foreach (Element element in tableOfElements)
-                dictionaryOfElements.Add(element.Symbol, element);
-        }
-
-        public IChemical buildChemicalGroup(List<string> stringList, bool isComplex)
-        {
-            ChemicalGroup myChemicalGroup = initializeChemicalGroup(isComplex);
+            ChemicalGroup myChemicalGroup = InitializeChemicalGroup(isComplex);
             IChemical chemical;
             for (int i = 0; i < stringList.Count; i++)
             {
-                chemical = turnStringIntoMoleculeOrComplex(stringList, ref i);
+                chemical = TurnStringIntoMoleculeOrComplex(stringList, ref i);
                 if (chemical != null)
                 {
-                    int subscript = setSubscript(stringList, i);
-                    addChemicalToChemicalGroup(myChemicalGroup, chemical, subscript);
+                    int subscript = SetSubscript(stringList, i);
+                    AddChemicalToChemicalGroup(myChemicalGroup, chemical, subscript);
                 }
                 else
-                    checkForErrors(stringList, i);
+                    CheckForErrors(stringList, i);
             }
             if (myChemicalGroup.Count == 1)      //If the final molecule contains only a single element, return the Element directly
                 return myChemicalGroup[0];
@@ -44,21 +29,21 @@ namespace AngryElectron.Domain
                 return myChemicalGroup;
         }
 
-        private IChemical turnStringIntoMoleculeOrComplex(List<string> stringList, ref int i)
+        private static IChemical TurnStringIntoMoleculeOrComplex(List<string> stringList, ref int i)
         {
             IChemical chemical;
             if (stringList[i] == "(")
             {
-                int endParenthesisLoc = findClosingParen(i, stringList);
-                chemical = findNextComplex(stringList, i, endParenthesisLoc);
+                int endParenthesisLoc = FindClosingParen(i, stringList);
+                chemical = FindNextComplex(stringList, i, endParenthesisLoc);
                 i = endParenthesisLoc;
             }
             else
-                chemical = findNextElement(stringList[i]);
+                chemical = FindNextElement(stringList[i]);
             return chemical;
         }
 
-        private static ChemicalGroup initializeChemicalGroup(bool isComplex)
+        private static ChemicalGroup InitializeChemicalGroup(bool isComplex)
         {
             ChemicalGroup myChemicalGroup;
             if (isComplex)
@@ -68,7 +53,7 @@ namespace AngryElectron.Domain
             return myChemicalGroup;
         }
 
-        private void addChemicalToChemicalGroup(ChemicalGroup myChemicalGroup, IChemical chemical, int subscript)
+        private static void AddChemicalToChemicalGroup(ChemicalGroup myChemicalGroup, IChemical chemical, int subscript)
         {
             while (subscript > 0)
             {
@@ -77,15 +62,15 @@ namespace AngryElectron.Domain
             }
         }
 
-        private IChemical findNextElement(string symbol)
+        private static IChemical FindNextElement(string symbol)
         {
-            if (dictionaryOfElements.ContainsKey(symbol))
-                return dictionaryOfElements[symbol];
-            else
-                return null;
+            Element myElement = null;
+            if (TableOfElements.Instance.Where(x => x.Symbol == symbol).Count() > 0)
+                myElement = TableOfElements.Instance.Where(x => x.Symbol == symbol).First();
+            return myElement;
         }
-        
-        public void checkForErrors(List<string> stringList, int i)
+
+        public static void CheckForErrors(List<string> stringList, int i)
         {
             int x;  //We don't use x for anything, but TryParse() requires an out operator.
             if (int.TryParse(stringList[i], out x))
@@ -99,17 +84,17 @@ namespace AngryElectron.Domain
                 throw new ArgumentException("Attempted to Parse Invalid Character: " + stringList[i].ToString());
         }
 
-        private IChemical findNextComplex(List<string> stringList, int i, int endParenthesisLoc)
+        private static IChemical FindNextComplex(List<string> stringList, int i, int endParenthesisLoc)
         {
             List<string> complex = new List<string>();
             for (int n = i + 1; n < endParenthesisLoc; n++)
                 complex.Add(stringList[n]);
-            IChemical myComplex = buildChemicalGroup(complex, true);
+            IChemical myComplex = BuildChemicalGroup(complex, true);
             i = endParenthesisLoc; //We've added everything within the parentheses, so we need to set i to the closing parenthesis location.
             return myComplex;
         }
 
-        private int setSubscript(List<string> moleculeString, int i)
+        private static int SetSubscript(List<string> moleculeString, int i)
         {
             int subscript = 1;
             if (i >= moleculeString.Count - 1)
@@ -120,7 +105,7 @@ namespace AngryElectron.Domain
             return subscript;
         }
 
-        private int findClosingParen(int i, List<string> moleculeString)
+        private static int FindClosingParen(int i, List<string> moleculeString)
         {
             int openBrackets = 1;
             while (openBrackets > 0)

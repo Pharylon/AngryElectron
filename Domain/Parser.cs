@@ -6,19 +6,17 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class Parser : IParser
+    public static class Parser
     {
-        ChemicalGroupBuilder myBuilder = new ChemicalGroupBuilder();
-
-        public ChemicalEquation Parse(string inputString)
+        public static ChemicalEquation Parse(string inputString)
         {
-            string[] symbolArray = createSymbolArray(inputString);
-            ChemicalEquation myChemicalEquation = convertArrayToEquation(symbolArray);
-            checkForValidEquation(myChemicalEquation);
+            string[] symbolArray = CreateSymbolArray(inputString);
+            ChemicalEquation myChemicalEquation = ConvertArrayToEquation(symbolArray);
+            CheckForValidEquation(myChemicalEquation);
             return myChemicalEquation;  
         }
 
-        private ChemicalEquation convertArrayToEquation(string[] symbolArray)
+        private static ChemicalEquation ConvertArrayToEquation(string[] symbolArray)
         {
             ChemicalEquation myChemicalEquation = new ChemicalEquation();
             List<string> moleculeString = new List<string>();
@@ -27,7 +25,7 @@ namespace AngryElectron.Domain
             {
                 if (symbolArray[i] == "+" || symbolArray[i] == ">" || symbolArray[i] == "|")  //Finding one of these operators tells us we're at the end of a molecule.
                 {
-                    myChemicalEquation.Add(myBuilder.buildChemicalGroup(moleculeString, false), parsingSide);
+                    myChemicalEquation.Add(ChemicalGroupBuilder.BuildChemicalGroup(moleculeString, false), parsingSide);
                     moleculeString = new List<string>(); //reset for the next loop
                     if (symbolArray[i] == ">")
                         parsingSide = Side.RightSide;
@@ -38,16 +36,16 @@ namespace AngryElectron.Domain
             return myChemicalEquation;
         }
 
-        private static string[] createSymbolArray(string inputString)
+        private static string[] CreateSymbolArray(string inputString)
         {
-            inputString = normalizeCharacters(inputString);
-            StringBuilder commaSeperatedSymbols = generateCommaSeperatedSymbols(inputString);
-            removeUnwantedCharacters(commaSeperatedSymbols);
+            inputString = NormalizeCharacters(inputString);
+            StringBuilder commaSeperatedSymbols = GenerateCommaSeperatedSymbols(inputString);
+            RemoveUnwantedCharacters(commaSeperatedSymbols);
             string[] symbolArray = commaSeperatedSymbols.ToString().Split(',');
             return symbolArray;
         }
 
-        private static void removeUnwantedCharacters(StringBuilder commaSeperatedSymbols)
+        private static void RemoveUnwantedCharacters(StringBuilder commaSeperatedSymbols)
         {
             commaSeperatedSymbols.Replace(" ", "");
             commaSeperatedSymbols.Replace("-", "");
@@ -69,7 +67,7 @@ namespace AngryElectron.Domain
             }
         }
 
-        private static StringBuilder generateCommaSeperatedSymbols(string inputString)
+        private static StringBuilder GenerateCommaSeperatedSymbols(string inputString)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < inputString.Length; i++)
@@ -90,7 +88,7 @@ namespace AngryElectron.Domain
             return sb;
         }
 
-        private static string normalizeCharacters(string inputString)
+        private static string NormalizeCharacters(string inputString)
         {
             inputString = inputString.Replace("[", "(");
             inputString = inputString.Replace("]", ")");
@@ -98,7 +96,7 @@ namespace AngryElectron.Domain
             return inputString;
         }
 
-        private void checkForValidEquation(ChemicalEquation unbalancedEquation)
+        private static void CheckForValidEquation(ChemicalEquation unbalancedEquation)
         {
             foreach (Element e in unbalancedEquation.ListOfElements)
             {

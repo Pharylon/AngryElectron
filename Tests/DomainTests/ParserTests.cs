@@ -7,7 +7,6 @@ namespace AngryElectron.Tests.Domain
     [TestClass]
     public class ParserTests
     {
-        Parser SideParser = new Parser();
         ChemicalEquation SideEquation;
 
         [TestMethod]
