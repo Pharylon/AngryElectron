@@ -55,7 +55,6 @@
     <Compile Include="Element.cs" />
     <Compile Include="ChemicalGroupClasses\ChemicalGroup.cs" />
     <Compile Include="ChemicalGroupBuilder.cs" />
-    <Compile Include="Elements.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ChemicalGroupClasses\EquationSide.cs" />
     <Compile Include="Interfaces\IChemical.cs" />

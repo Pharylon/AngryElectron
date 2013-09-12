@@ -22,12 +22,12 @@ namespace AngryElectron.Domain
         //Path _tableOfElementsPath = Path.GetDirectoryName("hello");
         private TableOfElements()
         {
-            initializeTableOfElements(path);
+            InitializeTableOfElements(path);
         }
 
         private TableOfElements(string path)
         {
-            initializeTableOfElements(path);
+            InitializeTableOfElements(path);
         }
 
         public string Json 
@@ -40,7 +40,7 @@ namespace AngryElectron.Domain
             }
         }
 
-        private void initializeTableOfElements(string path)
+        private void InitializeTableOfElements(string path)
         {
             this.AddRange(JsonConvert.DeserializeObject<List<Element>>(Json));
         }

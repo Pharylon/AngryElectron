@@ -49,10 +49,10 @@ namespace AngryElectron.Domain
         {
             commaSeperatedSymbols.Replace(" ", "");
             commaSeperatedSymbols.Replace("-", "");
-            removeExtraArrows(commaSeperatedSymbols);
+            RemoveExtraArrows(commaSeperatedSymbols);
         }
 
-        private static void removeExtraArrows(StringBuilder commaSeperatedSymbols)
+        private static void RemoveExtraArrows(StringBuilder commaSeperatedSymbols)
         {
             bool foundFirstArrow = false;
             for (int i = commaSeperatedSymbols.Length - 1; i > 0; i--)
@@ -77,7 +77,7 @@ namespace AngryElectron.Domain
                 if (char.IsDigit(inputString[i]))
                 {
                     if (i == 0)
-                        throw new ArgumentException("Parser encountered an error: Equations may not begin with a number");
+                        throw new ArgumentException("Parser encountered an error: Equations may not begin with a number.");
                     else
                         if (!char.IsDigit(inputString[i - 1])) //Make sure this is the last digit in case of a two digit number.
                             sb.Append(",");
@@ -101,7 +101,7 @@ namespace AngryElectron.Domain
             foreach (Element e in unbalancedEquation.ListOfElements)
             {
                 if (!unbalancedEquation.Products.ListOfElements.Contains(e) || !unbalancedEquation.Reactants.ListOfElements.Contains(e))
-                    throw new ArgumentException("Error: the element or complex " + e.ToString() + " could not be found on both sides of the equation");
+                    throw new ArgumentException("Error: the element or complex " + e.ToString() + " could not be found on both sides of the equation.");
             }
         }
     }

@@ -15,9 +15,9 @@ namespace AngryElectron.Domain
         public static ChemicalEquation Balance(ChemicalEquation myEquation)
         {
             bool equationFlipped = PrepareEquationForProcessing(myEquation); //For some reason, the Matrix solving is failing when all the products have a subscript of 1. This is a HACK to fix this issue.
-            List<int> coefficients = getCoefficients(myEquation);
-            addCoefficients(coefficients, myEquation);
-            finalSanityCheck(myEquation);
+            List<int> coefficients = GetCoefficients(myEquation);
+            AddCoefficients(coefficients, myEquation);
+            FinalSanityCheck(myEquation);
             if (equationFlipped) //If we had to flip the equation in the beginning, flip it back before returning to the user.
             {
                 FlipEquation(myEquation);
@@ -48,22 +48,22 @@ namespace AngryElectron.Domain
             myEquation.Products = placeHolder;
         }
 
-        private static List<int> getCoefficients(ChemicalEquation unbalancedEquation)
+        private static List<int> GetCoefficients(ChemicalEquation unbalancedEquation)
         {
-            DenseMatrix unsolvedMatrix = buildMatrix(unbalancedEquation);
-            DenseVector vector = buildVector(unbalancedEquation);
+            DenseMatrix unsolvedMatrix = BuildMatrix(unbalancedEquation);
+            DenseVector vector = BuildVector(unbalancedEquation);
             List<double> answers = MatrixSolver.Solve(unsolvedMatrix, vector);
-            List<int> coefficients = convertAnswersToIntegers(answers);
+            List<int> coefficients = ConvertAnswersToIntegers(answers);
             return coefficients;
         }
 
-        private static void finalSanityCheck(ChemicalEquation myEquation)
+        private static void FinalSanityCheck(ChemicalEquation myEquation)
         {
             if (!myEquation.IsBalanced)
                 throw new Exception("Error: Blancer failed to balance the equation!");
         }
 
-        private static void addCoefficients(List<int> answers, ChemicalEquation unbalancedEquation)
+        private static void AddCoefficients(List<int> answers, ChemicalEquation unbalancedEquation)
         {
             IChemical currentChemical;
             for (int i = 0; i < unbalancedEquation.MoleculeCount; i++)
@@ -81,7 +81,7 @@ namespace AngryElectron.Domain
             }
         }
 
-        private static DenseVector buildVector(ChemicalEquation unbalancedEquation)
+        private static DenseVector BuildVector(ChemicalEquation unbalancedEquation)
         {
             DenseVector vector = new DenseVector(unbalancedEquation.ListOfElements.Count);
             for (int i = 0; i < unbalancedEquation.ListOfElements.Count; i++)
@@ -97,7 +97,7 @@ namespace AngryElectron.Domain
             return vector;
         }
 
-        private static DenseMatrix buildMatrix(ChemicalEquation unbalancedEquation)
+        private static DenseMatrix BuildMatrix(ChemicalEquation unbalancedEquation)
         {
             List<Element> listOfElements = unbalancedEquation.ListOfElements;
             Side processingSide = Side.LeftSide;
@@ -108,24 +108,24 @@ namespace AngryElectron.Domain
                 {
                     if (column >= unbalancedEquation.Reactants.Count)
                         processingSide = Side.RightSide;
-                    myMatrix[row, column] = getMatrixPoint(unbalancedEquation, processingSide, column, row, listOfElements);
+                    myMatrix[row, column] = GetMatrixPoint(unbalancedEquation, processingSide, column, row, listOfElements);
                 }
             }
             return myMatrix;
         }
 
-        private static double getMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<Element> listOfElements)
+        private static double GetMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<Element> listOfElements)
         {
-            EquationSide currentSide = setCurrentProcessingSide(unbalancedEquation, processingSide);
+            EquationSide currentSide = SetCurrentProcessingSide(unbalancedEquation, processingSide);
             if (processingSide == Side.RightSide)
                 column -= unbalancedEquation.Reactants.Count;
-            double matrixPoint = getElementCountOfChemical(column, row, listOfElements, currentSide);
+            double matrixPoint = GetElementCountOfChemical(column, row, listOfElements, currentSide);
             if (processingSide == Side.RightSide)
                 matrixPoint *= -1.0;
             return matrixPoint;
         }
 
-        private static double getElementCountOfChemical(int column, int row, List<Element> listOfElements, EquationSide currentSide)
+        private static double GetElementCountOfChemical(int column, int row, List<Element> listOfElements, EquationSide currentSide)
         {
             double matrixPoint = 0;
             if (currentSide[column] == listOfElements[row]) //check to see if the current column is a single instance of the element we are searching for.
@@ -138,7 +138,7 @@ namespace AngryElectron.Domain
             return matrixPoint;
         }
 
-        private static EquationSide setCurrentProcessingSide(ChemicalEquation unbalancedEquation, Side processingSide)
+        private static EquationSide SetCurrentProcessingSide(ChemicalEquation unbalancedEquation, Side processingSide)
         {
             if (processingSide == Side.LeftSide)
                 return unbalancedEquation.Reactants;
@@ -146,15 +146,15 @@ namespace AngryElectron.Domain
                 return unbalancedEquation.Products;
         }
 
-        private static List<int> convertAnswersToIntegers(List<double> answers)
+        private static List<int> ConvertAnswersToIntegers(List<double> answers)
         {
             List<int> coefficients = new List<int>();
             int numberToMultiplyBy = 1;
             while (numberToMultiplyBy < 10000)
             {
-                List<double> checkList = multiplyAnswers(answers, numberToMultiplyBy);
+                List<double> checkList = MultiplyAnswers(answers, numberToMultiplyBy);
 
-                if (checkAllAnswersAreIntegers(checkList))
+                if (CheckAllAnswersAreIntegers(checkList))
                 {
                     foreach (double d in checkList)
                         coefficients.Add((int)d);
@@ -166,7 +166,7 @@ namespace AngryElectron.Domain
             throw new ArgumentException("Error: Could not determine integer values of coefficients");
         }
 
-        private static bool checkAllAnswersAreIntegers(List<double> checkList)
+        private static bool CheckAllAnswersAreIntegers(List<double> checkList)
         {
             foreach (double d in checkList)
                 if (d % 1 != 0)
@@ -174,7 +174,7 @@ namespace AngryElectron.Domain
             return true;
         }
 
-        private static List<double> multiplyAnswers(List<double> answers, int numberToMultiplyBy)
+        private static List<double> MultiplyAnswers(List<double> answers, int numberToMultiplyBy)
         {
             List<double> checkList = new List<double>(answers);
             for (int i = 0; i < checkList.Count; i++)

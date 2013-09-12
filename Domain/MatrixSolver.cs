@@ -18,11 +18,11 @@ namespace AngryElectron.Domain
             var matrixAnswers = denseMatrix.QR().Solve(denseVector);
             foreach (double d in matrixAnswers)
                 answers.Add(d);
-            answers.Add(solveForZ(denseMatrix, denseVector, matrixAnswers));
+            answers.Add(SolveForZ(denseMatrix, denseVector, matrixAnswers));
             return answers;
         }
 
-        private static double solveForZ(DenseMatrix unsolvedMatrix, DenseVector vector, MathNet.Numerics.LinearAlgebra.Generic.Vector<double> matrixAnswers)
+        private static double SolveForZ(DenseMatrix unsolvedMatrix, DenseVector vector, MathNet.Numerics.LinearAlgebra.Generic.Vector<double> matrixAnswers)
         {
             for (int i = 0; i < vector.Count; i++)
             {
