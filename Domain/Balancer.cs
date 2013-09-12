@@ -34,7 +34,10 @@ namespace AngryElectron.Domain
                 if (cg.GetDeepElementCount(element) > 1)
                     AllProductsHaveSubscriptOf1 = false;
             }
-            FlipEquation(myEquation);
+            if (AllProductsHaveSubscriptOf1)
+            {
+                FlipEquation(myEquation);
+            }
             return AllProductsHaveSubscriptOf1;
         }
 
