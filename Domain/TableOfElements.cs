@@ -11,7 +11,7 @@ namespace AngryElectron.Domain
 {
     public class TableOfElements : List<Element>
     {
-        private string _tableOfElementsFilePath = @"C:\Users\Patrick\Projects\AngryElectron\Domain\Data\TableOfElements.json";
+        private string _tableOfElementsFilePath = @"C:\Misc\TableOfElements.json";
         //Path _tableOfElementsPath = Path.GetDirectoryName("hello");
         public TableOfElements()
         {
@@ -27,6 +27,7 @@ namespace AngryElectron.Domain
         { 
             get
             {
+                
                 StreamReader streamReader = new StreamReader(_tableOfElementsFilePath);
                 return streamReader.ReadToEnd().ToString();
             }

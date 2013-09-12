@@ -14,10 +14,35 @@ namespace AngryElectron.Domain
     {
         public ChemicalEquation Balance(ChemicalEquation myEquation)
         {
+            bool equationFlipped = PrepareEquationForProcessing(myEquation); //For some reason, the Matrix solving is failing when all the products have a subscript of 1. This is a HACK to fix this issue.
             List<int> coefficients = getCoefficients(myEquation);
             addCoefficients(coefficients, myEquation);
             finalSanityCheck(myEquation);
+            if (equationFlipped) //If we had to flip the equation in the beginning, flip it back before returning to the user.
+            {
+                FlipEquation(myEquation);
+            }
             return myEquation;
+        }
+
+        private bool PrepareEquationForProcessing(ChemicalEquation myEquation) 
+        {   
+            bool AllProductsHaveSubscriptOf1 = true;
+            ChemicalGroup cg = (ChemicalGroup)myEquation.Products;
+            foreach (var element in cg.ListOfElements)
+            {
+                if (cg.GetDeepElementCount(element) > 1)
+                    AllProductsHaveSubscriptOf1 = false;
+            }
+            FlipEquation(myEquation);
+            return AllProductsHaveSubscriptOf1;
+        }
+
+        private void FlipEquation(ChemicalEquation myEquation)
+        {
+            EquationSide placeHolder = myEquation.Reactants;
+            myEquation.Reactants = myEquation.Products;
+            myEquation.Products = placeHolder;
         }
 
         private List<int> getCoefficients(ChemicalEquation unbalancedEquation)

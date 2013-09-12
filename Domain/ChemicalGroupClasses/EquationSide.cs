@@ -11,7 +11,6 @@ namespace AngryElectron.Domain
 
         public EquationSide(string equationSide)
         {
-
         }
 
         public EquationSide()

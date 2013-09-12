@@ -28,6 +28,14 @@ namespace AngryElectron.Tests.Domain
         }
 
         [TestMethod]
+        public void BalanceH2O()
+        {
+            myEquation = myParser.Parse("H2O -> H + O");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToString() == "H2O -> 2H + O");
+        }
+
+        [TestMethod]
         public void BalancerHTMLTest()
         {
             myEquation = myParser.Parse("FeS2 + O2 -> Fe2O3 + SO2");
@@ -57,6 +65,14 @@ namespace AngryElectron.Tests.Domain
             myEquation = myParser.Parse("HCl + Na = NaCl + H2");
             myEquation = myBalancer.Balance(myEquation);
             Assert.IsTrue(myEquation.ToString() == "2HCl + 2Na -> 2NaCl + H2");
+        }
+
+        [TestMethod]
+        public void BalancerWithLoneElementTestReversed()
+        {
+            myEquation = myParser.Parse("NaCl + H2 = HCl + Na");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToString() == "2NaCl + H2 -> 2HCl + 2Na");
         }
 
         [TestMethod]
