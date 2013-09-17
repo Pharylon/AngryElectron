@@ -10,55 +10,22 @@ namespace AngryElectron.Domain
     {
         protected List<IChemical> contents = new List<IChemical>();
 
-        protected Dictionary<string, Element> dictionaryOfElements;
-
-        public ChemicalGroup()
-        {
-            initializeDictionaryOfElements();
-        }
-
         public virtual void Add(IChemical chemical)
         {
             contents.Add(chemical);
         }
 
-        public List<Element> ListOfElements
+        public Element[] Elements
         {
             get
             {
                 List<Element> elementList = new List<Element>();
                 foreach (IChemical chemical in contents)
-                    if (chemical is Element && !elementList.Contains(chemical))
-                        elementList.Add((Element)chemical);
-                    else if (chemical is ChemicalGroup)
-                    {
-                        ChemicalGroup chemicalGroup = (ChemicalGroup)chemical;
-                        elementList = elementList.Union(chemicalGroup.ListOfElements).ToList();
-                    }
-                return elementList;
-            }
-        }
-
-        public List<IChemical> ListOfContents
-        {
-            get
-            {
-                List<IChemical> listOfContents = new List<IChemical>();
-                foreach (IChemical chemical in contents)
                 {
-                    if (!listOfContents.Contains(chemical))
-                        listOfContents.Add(chemical);
+                    elementList = elementList.Union(chemical.Elements).ToList();
                 }
-                return listOfContents;
+                return elementList.ToArray();
             }
-        }
-
-        private void initializeDictionaryOfElements()
-        {
-            TableOfElements tableOfElements = TableOfElements.Instance;
-            dictionaryOfElements = new Dictionary<string, Element>();
-            foreach (Element element in tableOfElements)
-                dictionaryOfElements.Add(element.Symbol, element);
         }
 
         public int GetDeepElementCount(Element elementToCheck)

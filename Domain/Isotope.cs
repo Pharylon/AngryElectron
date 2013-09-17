@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class Isotope:Element
+    public class Isotope : Element
     {
 
         public override double AtomicMass { get; set; }

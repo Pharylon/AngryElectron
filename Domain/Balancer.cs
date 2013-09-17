@@ -28,10 +28,9 @@ namespace AngryElectron.Domain
         private static bool PrepareEquationForProcessing(ChemicalEquation myEquation) 
         {   
             bool AllProductsHaveSubscriptOf1 = true;
-            ChemicalGroup cg = (ChemicalGroup)myEquation.Products;
-            foreach (var element in cg.ListOfElements)
+            foreach (var element in myEquation.Elements)
             {
-                if (cg.GetDeepElementCount(element) > 1)
+                if (myEquation.Products.GetDeepElementCount(element) > 1)
                     AllProductsHaveSubscriptOf1 = false;
             }
             if (AllProductsHaveSubscriptOf1)
@@ -83,15 +82,15 @@ namespace AngryElectron.Domain
 
         private static DenseVector BuildVector(ChemicalEquation unbalancedEquation)
         {
-            DenseVector vector = new DenseVector(unbalancedEquation.ListOfElements.Count);
-            for (int i = 0; i < unbalancedEquation.ListOfElements.Count; i++)
+            DenseVector vector = new DenseVector(unbalancedEquation.Elements.Length);
+            for (int i = 0; i < unbalancedEquation.Elements.Length; i++)
             {
                 if (unbalancedEquation.Products[unbalancedEquation.Products.Count - 1] is Element)
                     vector[i] = 1;
                 else
                 {
                     ChemicalGroup lastChemical = (ChemicalGroup)unbalancedEquation.Products[unbalancedEquation.Products.Count - 1];
-                    vector[i] = lastChemical.GetDeepElementCount(unbalancedEquation.ListOfElements[i]);
+                    vector[i] = lastChemical.GetDeepElementCount(unbalancedEquation.Elements[i]);
                 }
             }
             return vector;
@@ -99,41 +98,41 @@ namespace AngryElectron.Domain
 
         private static DenseMatrix BuildMatrix(ChemicalEquation unbalancedEquation)
         {
-            List<Element> listOfElements = unbalancedEquation.ListOfElements;
+            Element[] myElements = unbalancedEquation.Elements;
             Side processingSide = Side.LeftSide;
-            DenseMatrix myMatrix = new DenseMatrix(listOfElements.Count, unbalancedEquation.MoleculeCount - 1);
+            DenseMatrix myMatrix = new DenseMatrix(myElements.Length, unbalancedEquation.MoleculeCount - 1);
             for (int column = 0; column < unbalancedEquation.MoleculeCount - 1; column++)
             {
-                for (int row = 0; row < listOfElements.Count; row++)
+                for (int row = 0; row < myElements.Length; row++)
                 {
                     if (column >= unbalancedEquation.Reactants.Count)
                         processingSide = Side.RightSide;
-                    myMatrix[row, column] = GetMatrixPoint(unbalancedEquation, processingSide, column, row, listOfElements);
+                    myMatrix[row, column] = GetMatrixPoint(unbalancedEquation, processingSide, column, row, myElements);
                 }
             }
             return myMatrix;
         }
 
-        private static double GetMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, List<Element> listOfElements)
+        private static double GetMatrixPoint(ChemicalEquation unbalancedEquation, Side processingSide, int column, int row, Element[] elements)
         {
             EquationSide currentSide = SetCurrentProcessingSide(unbalancedEquation, processingSide);
             if (processingSide == Side.RightSide)
                 column -= unbalancedEquation.Reactants.Count;
-            double matrixPoint = GetElementCountOfChemical(column, row, listOfElements, currentSide);
+            double matrixPoint = GetElementCountOfChemical(column, row, elements, currentSide);
             if (processingSide == Side.RightSide)
                 matrixPoint *= -1.0;
             return matrixPoint;
         }
 
-        private static double GetElementCountOfChemical(int column, int row, List<Element> listOfElements, EquationSide currentSide)
+        private static double GetElementCountOfChemical(int column, int row, Element[] elements, EquationSide currentSide)
         {
             double matrixPoint = 0;
-            if (currentSide[column] == listOfElements[row]) //check to see if the current column is a single instance of the element we are searching for.
+            if (currentSide[column] == elements[row]) //check to see if the current column is a single instance of the element we are searching for.
                 matrixPoint = 1.0;
             else if (currentSide[column] is ChemicalGroup)
             {
                 ChemicalGroup currentMolecule = (ChemicalGroup)currentSide[column];
-                matrixPoint = currentMolecule.GetDeepElementCount(listOfElements[row]);
+                matrixPoint = currentMolecule.GetDeepElementCount(elements[row]);
             }
             return matrixPoint;
         }

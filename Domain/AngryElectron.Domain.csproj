@@ -55,11 +55,9 @@
     <Compile Include="Element.cs" />
     <Compile Include="ChemicalGroupClasses\ChemicalGroup.cs" />
     <Compile Include="ChemicalGroupBuilder.cs" />
-    <Compile Include="Enums.cs" />
+    <Compile Include="EnumsAndExtensions.cs" />
     <Compile Include="ChemicalGroupClasses\EquationSide.cs" />
     <Compile Include="Interfaces\IChemical.cs" />
-    <Compile Include="Interfaces\IComplexContent.cs" />
-    <Compile Include="Interfaces\IMoleculeContent.cs" />
     <Compile Include="ChemicalGroupClasses\Molecule.cs" />
     <Compile Include="Isotope.cs" />
     <Compile Include="MatrixSolver.cs" />

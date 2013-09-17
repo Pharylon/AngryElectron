@@ -11,20 +11,20 @@ namespace AngryElectron.Domain
         public EquationSide Reactants = new EquationSide();
         public EquationSide Products = new EquationSide();
 
+        public ChemicalEquation()
+        {
+        }
+
         public ChemicalEquation(string inputString)
         {
             ChemicalEquation myEquation = Parser.Parse(inputString);
             Reactants = myEquation.Reactants;
             Products = myEquation.Products;
         }
-
-        public ChemicalEquation()
-        {
-        }
-
+        
         public int MoleculeCount { get { return Reactants.Count + Products.Count; } }
         public bool IsBalanced { get { return (Math.Round(Reactants.Mass, 4) == Math.Round(Products.Mass, 4)); } }
-        public List<Element> ListOfElements { get { return Reactants.ListOfElements.Union(Products.ListOfElements).ToList(); } }
+        public Element[] Elements { get { return Reactants.Elements.Union(Products.Elements).ToArray(); } }
 
         public void Add(IChemical chemical, Side side)
         {

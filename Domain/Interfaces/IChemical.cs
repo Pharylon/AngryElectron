@@ -10,5 +10,6 @@ namespace AngryElectron.Domain
     {
         String ToHTML();
         double Mass { get; }
+        Element[] Elements { get; }
     }
 }

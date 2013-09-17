@@ -17,15 +17,9 @@ namespace AngryElectron.Domain
         private static readonly Lazy<TableOfElements> lazy = new Lazy<TableOfElements>(() => new TableOfElements());
         public static TableOfElements Instance { get { return lazy.Value; } }
 
-
         string path = AppDomain.CurrentDomain.BaseDirectory + @"\App_Data\TableOfElements.json";
-        //Path _tableOfElementsPath = Path.GetDirectoryName("hello");
-        private TableOfElements()
-        {
-            InitializeTableOfElements(path);
-        }
 
-        private TableOfElements(string path)
+        private TableOfElements()
         {
             InitializeTableOfElements(path);
         }

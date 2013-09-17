@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class Complex : ChemicalGroup, IComplexContent, IMoleculeContent
+    class Complex : ChemicalGroup
     {
         public override void Add(IChemical chemical)
         {
-            if (chemical is IComplexContent)
+            if (chemical is Element || chemical is Complex)
                 base.Add(chemical);
             else
                 throw new ArgumentException("Complexes may only contain other complexes and elements");
@@ -20,13 +20,12 @@ namespace AngryElectron.Domain
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            foreach (IChemical chemical in ListOfContents)
+            foreach (IChemical chemical in contents.Distinct())
             {
                 int subScript = this.GetShallowChemicalCount(chemical);
-                if (subScript == 1)
-                    sb.Append(chemical.ToString());
-                else
-                    sb.Append(chemical.ToString() + subScript.ToString());
+                sb.Append(chemical.ToString());
+                if (subScript > 1)
+                    sb.Append(subScript.ToString());
             }
             sb.Append(")");
             return sb.ToString();
@@ -36,13 +35,12 @@ namespace AngryElectron.Domain
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            foreach (IChemical chemical in ListOfContents)
+            foreach (IChemical chemical in contents.Distinct())
             {
                 int subScript = GetShallowChemicalCount(chemical);
-                if (subScript == 1)
-                    sb.Append(chemical.ToString());
-                else
-                    sb.Append(chemical.ToString() + "<sub>" + subScript.ToString() + "</sub>");
+                sb.Append(chemical.ToString());
+                if (subScript > 1)
+                    sb.Append("<sub>" + subScript.ToString() + "</sub>");
             }
             sb.Append(")");
             return sb.ToString();

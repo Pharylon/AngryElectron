@@ -18,22 +18,46 @@ namespace AngryElectron.Domain
 
         private static ChemicalEquation ConvertArrayToEquation(string[] symbolArray)
         {
+            int arrowLocation = GetArrowLocation(symbolArray);
+            string[][] leftSide = ConvertToArrayofArrays(symbolArray.SubArray(0, arrowLocation));
+            string[][] rightSide = ConvertToArrayofArrays(symbolArray.SubArray(arrowLocation + 1, symbolArray.Length - (arrowLocation + 1)));
             ChemicalEquation myChemicalEquation = new ChemicalEquation();
-            List<string> moleculeString = new List<string>();
-            Side parsingSide = Side.LeftSide;
-            for (int i = 0; i < symbolArray.Length; i++)
+            foreach (string[] s in leftSide)
+                myChemicalEquation.Add(ChemicalGroupBuilder.Build(s, false), Side.LeftSide);
+            foreach (string[] s in rightSide)
+                myChemicalEquation.Add(ChemicalGroupBuilder.Build(s, false), Side.RightSide);
+            return myChemicalEquation;
+        }
+
+        private static string[][] ConvertToArrayofArrays(string[] symbolArray)
+        {
+            List<string[]> listofArrays = new List<string[]>();
+            List<string> list = new List<string>();
+            foreach (string s in symbolArray)
             {
-                if (symbolArray[i] == "+" || symbolArray[i] == ">" || symbolArray[i] == "|")  //Finding one of these operators tells us we're at the end of a molecule.
+                if (s != "+")
                 {
-                    myChemicalEquation.Add(ChemicalGroupBuilder.BuildChemicalGroup(moleculeString, false), parsingSide);
-                    moleculeString = new List<string>(); //reset for the next loop
-                    if (symbolArray[i] == ">")
-                        parsingSide = Side.RightSide;
+                    list.Add(s);
                 }
                 else
-                    moleculeString.Add(symbolArray[i]); //If we didn't find an "end of molecule" operator, the symbol is added to moleculeString to be processed when we do find one. 
+                {
+                    listofArrays.Add(list.ToArray()); //add the molecule when we hit the + sign and reset the list.
+                    list = new List<string>();
+                }
             }
-            return myChemicalEquation;
+            listofArrays.Add(list.ToArray()); //add last molecule when the loop is over.
+            return listofArrays.ToArray();
+        }
+
+        private static int GetArrowLocation(string[] symbolArray)
+        {
+            int arrowLocation = 0;
+            for (int i = 0; i < symbolArray.Length; i++)
+            {
+                if (symbolArray[i] == ">")
+                    arrowLocation = i;
+            }
+            return arrowLocation;
         }
 
         private static string[] CreateSymbolArray(string inputString)
@@ -69,10 +93,14 @@ namespace AngryElectron.Domain
 
         private static StringBuilder GenerateCommaSeperatedSymbols(string inputString)
         {
+            if (inputString.Length == 0)
+            {
+                throw new ArgumentException("Please enter some information!");
+            }
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < inputString.Length; i++)
             {
-                if ((Char.IsUpper(inputString[i]) || inputString[i] == '+' || inputString[i] == '>' || inputString[i] == ')' || inputString[i] == '(') && sb.Length > 0)
+                if ((Char.IsUpper(inputString[i]) || inputString[i] == '>' || inputString[i] == '+' || inputString[i] == ')' || inputString[i] == '(') && sb.Length > 0)
                     sb.Append(",");
                 if (char.IsDigit(inputString[i]))
                 {
@@ -84,7 +112,7 @@ namespace AngryElectron.Domain
                 }
                 sb.Append(inputString[i]);
             }
-            sb.Append(",|"); //Pipe is used as an "end of equation" character for the parser.
+            //sb.Append(",|"); //Pipe is used as an "end of equation" character for the parser.
             return sb;
         }
 
@@ -98,9 +126,9 @@ namespace AngryElectron.Domain
 
         private static void CheckForValidEquation(ChemicalEquation unbalancedEquation)
         {
-            foreach (Element e in unbalancedEquation.ListOfElements)
+            foreach (Element e in unbalancedEquation.Elements)
             {
-                if (!unbalancedEquation.Products.ListOfElements.Contains(e) || !unbalancedEquation.Reactants.ListOfElements.Contains(e))
+                if (!unbalancedEquation.Products.Elements.Contains(e) || !unbalancedEquation.Reactants.Elements.Contains(e))
                     throw new ArgumentException("Error: the element or complex " + e.ToString() + " could not be found on both sides of the equation.");
             }
         }

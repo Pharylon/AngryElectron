@@ -11,7 +11,7 @@ namespace AngryElectron.Tests.Domain
         [TestMethod]
         public void CanInitializeWithString()
         {
-            EquationSide reactants = new EquationSide("H2SO4");
+            //EquationSide reactants = new EquationSide("H2SO4");
         }
     }
 }

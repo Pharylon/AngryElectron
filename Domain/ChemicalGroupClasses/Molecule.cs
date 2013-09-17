@@ -10,7 +10,7 @@ namespace AngryElectron.Domain
     {
         public override void Add(IChemical chemical)
         {
-            if (chemical is IMoleculeContent)
+            if (chemical is Element || chemical is Complex)
                 base.Add(chemical);
             else
                 throw new ArgumentException("Error: Molecules may only contain complexes and elements");
@@ -19,13 +19,12 @@ namespace AngryElectron.Domain
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (IChemical chemical in ListOfContents)
+            foreach (IChemical chemical in contents.Distinct())
             {
                 int subScript = GetShallowChemicalCount(chemical);
-                if (subScript == 1)
-                    sb.Append(chemical.ToString());
-                else
-                    sb.Append(chemical.ToString() + subScript.ToString());
+                sb.Append(chemical.ToString());
+                if (subScript > 1)
+                    sb.Append(subScript.ToString());
             }
             return sb.ToString();
         }
@@ -33,13 +32,12 @@ namespace AngryElectron.Domain
         public override string ToHTML()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (IChemical chemical in ListOfContents)
+            foreach (IChemical chemical in contents.Distinct())
             {
                 int subScript = GetShallowChemicalCount(chemical);
-                if (subScript == 1)
-                    sb.Append(chemical.ToHTML());
-                else
-                    sb.Append(chemical.ToHTML() + "<sub>" + subScript.ToString() + "</sub>");
+                sb.Append(chemical.ToHTML());
+                if (subScript > 1)
+                    sb.Append("<sub>" + subScript.ToString() + "</sub>");
             }
             return sb.ToString();
         }
