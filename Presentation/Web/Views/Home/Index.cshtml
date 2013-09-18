@@ -12,14 +12,27 @@
     <legend>Single Field Entry for Chemical Equation </legend>    
         <div class="span12">
             <label>Equation</label> 
-            <input type="text" name="unbalanced-equation" id="unbalanced-equation" placeholder="Enter full equation here..."/>
+            <input type="text" name="unbalanced-equation" id="unbalanced-equation" placeholder="Enter full equation here..."
+                onkeypress="return tableInputKeyPress(event)"/>
             <button id="btn-balance-equation" class="btn btn-primary" type="button"> Balance</button>
             <label>Balanced Equation</label> 
             <div id="balanced-equation-result"></div>
         </div>
-
     </fieldset>
 </form>
+
+<script type="text/javascript">
+function tableInputKeyPress(e){
+  e=e||window.event;
+  var key = e.keyCode;
+  if(key==13) //Enter
+  {
+     document.getElementById('btn-balance-equation').click()
+     return false; //return true to submit, false to do nothing
+  }
+}
+</script>
+
 @*@for (int i = 0; i < 4; i++ )
 {
     for (int j = 0; j< 8; j++){
