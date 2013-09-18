@@ -30,6 +30,18 @@ namespace AngryElectron.Domain
             return sb.ToString();
         }
 
+        public string ToStringWithoutCoefficients()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < contents.Count; i++)
+            {
+                sb.Append(contents[i].ToString());
+                if (i != contents.Count - 1)
+                    sb.Append(" + ");
+            }
+            return sb.ToString();
+        }
+
         public override string ToHTML()
         {
             StringBuilder sb = new StringBuilder();

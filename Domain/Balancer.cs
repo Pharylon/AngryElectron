@@ -17,11 +17,11 @@ namespace AngryElectron.Domain
             bool equationFlipped = PrepareEquationForProcessing(myEquation); //For some reason, the Matrix solving is failing when all the products have a subscript of 1. This is a HACK to fix this issue.
             List<int> coefficients = GetCoefficients(myEquation);
             AddCoefficients(coefficients, myEquation);
-            FinalSanityCheck(myEquation);
             if (equationFlipped) //If we had to flip the equation in the beginning, flip it back before returning to the user.
             {
                 FlipEquation(myEquation);
             }
+            FinalSanityCheck(myEquation);
             return myEquation;
         }
 
@@ -59,7 +59,7 @@ namespace AngryElectron.Domain
         private static void FinalSanityCheck(ChemicalEquation myEquation)
         {
             if (!myEquation.IsBalanced)
-                throw new Exception("Error: Blancer failed to balance the equation!");
+                throw new Exception(myEquation.ToStringWithoutCoefficients() + " could not be balanced! It may not be a possible reaction!");
         }
 
         private static void AddCoefficients(List<int> answers, ChemicalEquation unbalancedEquation)

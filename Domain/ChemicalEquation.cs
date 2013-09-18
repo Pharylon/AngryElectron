@@ -43,6 +43,11 @@ namespace AngryElectron.Domain
             return sb.ToString();
         }
 
+        public string ToStringWithoutCoefficients()
+        {
+            return Reactants.ToStringWithoutCoefficients() + " -> " + Products.ToStringWithoutCoefficients();
+        }
+
         public string ToHTML()
         {
             StringBuilder sb = new StringBuilder();
