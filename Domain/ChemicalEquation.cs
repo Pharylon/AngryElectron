@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class ChemicalEquation
+    public class ChemicalEquation : IEnumerable<IChemical>
     {
         public EquationSide Reactants = new EquationSide();
         public EquationSide Products = new EquationSide();
@@ -34,6 +35,18 @@ namespace AngryElectron.Domain
                 Products.Add(chemical);
         }
 
+        public IEnumerator<IChemical> GetEnumerator()
+        {
+            var unionList = Products.Union(Reactants).ToList();
+            foreach (var chemical in unionList)
+            {
+                if (chemical == null)
+                    break;
+                else
+                    yield return chemical;
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -43,12 +56,17 @@ namespace AngryElectron.Domain
             return sb.ToString();
         }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
         public string ToStringWithoutCoefficients()
         {
             return Reactants.ToStringWithoutCoefficients() + " -> " + Products.ToStringWithoutCoefficients();
         }
 
-        public string ToHTML()
+        public string ToHtml()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(Reactants.ToHTML());

@@ -67,8 +67,8 @@ namespace AngryElectron.Domain
         private static IChemical FindNextElement(string symbol)
         {
             Element myElement = null;
-            if (TableOfElements.Instance.Where(x => x.Symbol == symbol).Count() > 0)
-                myElement = TableOfElements.Instance.Where(x => x.Symbol == symbol).First();
+            if (TableOfElements.Instance.Count(x => x.Symbol == symbol) > 0)
+                myElement = TableOfElements.Instance.First(x => x.Symbol == symbol);
             return myElement;
         }
 

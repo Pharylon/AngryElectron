@@ -24,7 +24,7 @@ namespace AngryElectron.Presentation.Web.Controllers
             {
                 myEquation = Parser.Parse(unbalancedEquation);
                 myEquation = Balancer.Balance(myEquation);
-                returnString = myEquation.ToHTML();
+                returnString = myEquation.ToHtml();
             }
             catch (Exception ex)
             {

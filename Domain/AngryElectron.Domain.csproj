@@ -57,11 +57,12 @@
     <Compile Include="ChemicalGroupBuilder.cs" />
     <Compile Include="EnumsAndExtensions.cs" />
     <Compile Include="ChemicalGroupClasses\EquationSide.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="Interfaces\IChemical.cs" />
     <Compile Include="ChemicalGroupClasses\Molecule.cs" />
     <Compile Include="Isotope.cs" />
     <Compile Include="MatrixSolver.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="OldParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="TableOfElements.cs" />

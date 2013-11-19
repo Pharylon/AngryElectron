@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AngryElectron.Domain;
 
 namespace AngryElectron.Domain
 {
@@ -10,127 +11,185 @@ namespace AngryElectron.Domain
     {
         public static ChemicalEquation Parse(string inputString)
         {
-            string[] symbolArray = CreateSymbolArray(inputString);
-            ChemicalEquation myChemicalEquation = ConvertArrayToEquation(symbolArray);
-            CheckForValidEquation(myChemicalEquation);
-            return myChemicalEquation;  
+            ChemicalEquation myEquation = new ChemicalEquation();
+            var equationSideStrings = getEquationSides(inputString);
+            myEquation.Reactants = ParseEquationSide(equationSideStrings["leftSide"]);
+            myEquation.Products = ParseEquationSide(equationSideStrings["rightSide"]);
+            return myEquation;
         }
 
-        private static ChemicalEquation ConvertArrayToEquation(string[] symbolArray)
+        private static Dictionary<string, string> getEquationSides(string inputString)
         {
-            int arrowLocation = GetArrowLocation(symbolArray);
-            string[][] leftSide = ConvertToArrayofArrays(symbolArray.SubArray(0, arrowLocation));
-            string[][] rightSide = ConvertToArrayofArrays(symbolArray.SubArray(arrowLocation + 1, symbolArray.Length - (arrowLocation + 1)));
-            ChemicalEquation myChemicalEquation = new ChemicalEquation();
-            foreach (string[] s in leftSide)
-                myChemicalEquation.Add(ChemicalGroupBuilder.Build(s, false), Side.LeftSide);
-            foreach (string[] s in rightSide)
-                myChemicalEquation.Add(ChemicalGroupBuilder.Build(s, false), Side.RightSide);
-            return myChemicalEquation;
+            Dictionary<string, string> equationSideStrings = new Dictionary<string, string>();
+            inputString = NormalizeCharacters(inputString);
+            int arrowLocation = inputString.IndexOf('>');
+            equationSideStrings.Add("leftSide", inputString.Substring(0, arrowLocation));
+            equationSideStrings.Add("rightSide", inputString.Substring(arrowLocation + 1, inputString.Length - arrowLocation - 1));
+            return equationSideStrings;
         }
 
-        private static string[][] ConvertToArrayofArrays(string[] symbolArray)
+        private static EquationSide ParseEquationSide(string inputString)
         {
-            List<string[]> listofArrays = new List<string[]>();
-            List<string> list = new List<string>();
-            foreach (string s in symbolArray)
+            EquationSide mySide = new EquationSide();
+            var stringArray = inputString.Trim().Split(' ');
+            foreach (var myString in stringArray)
             {
-                if (s != "+")
+                mySide.Add(ParseMolecule(myString));
+            }
+            return mySide;
+        }
+
+        private static IChemical ParseMolecule(string myString)
+        {
+            Molecule myMolecule = new Molecule();;
+            Tuple<IChemical, int>[] myTuples = CreateMoleculeTuple(myString);
+            foreach (var myTuple in myTuples)
+                for (int i = 0; i < myTuple.Item2; i++)
+                    myMolecule.Add(myTuple.Item1);
+            return myMolecule;
+        }
+
+        private static IChemical ParseComplex(string myString)
+        {
+            Complex myComplex = new Complex();
+            Tuple<IChemical, int>[] myTuples = CreateMoleculeTuple(myString);
+            foreach (var myTuple in myTuples)
+                for (int i = 0; i < myTuple.Item2; i++)
+                    myComplex.Add(myTuple.Item1);
+            return myComplex;
+        }
+
+        private static Tuple<IChemical, int>[] CreateMoleculeTuple(string myString)
+        {
+            List<Element> myElements;
+            var myTupleList = new List<Tuple<IChemical, int>>();
+            var myComplexList = new List<Tuple<IChemical, int>>();
+            while (myString.Contains('('))
+                myComplexList = ProcessComplex(ref myString);
+            string elementString = string.Empty;
+            string numberString = string.Empty;
+            bool parsingString = true;
+            myString = StripCoefficients(myString);
+            foreach (char myChar in myString) {
+                if (!char.IsDigit(myChar))
                 {
-                    list.Add(s);
+                    if (!parsingString)
+                    {
+                        myElements = ConvertStringToElementList(elementString);
+                        myTupleList.AddRange(from IChemical element in myElements select Tuple.Create(element, 1));
+                        myTupleList[myTupleList.Count - 1] = Tuple.Create(myTupleList.Last().Item1, ParseOne(numberString));
+                        elementString = string.Empty;
+                        numberString = string.Empty;
+                        parsingString = true;
+                    }
+                    elementString += myChar;
                 }
                 else
                 {
-                    listofArrays.Add(list.ToArray()); //add the molecule when we hit the + sign and reset the list.
-                    list = new List<string>();
+                    numberString += myChar;
+                    parsingString = false;
                 }
             }
-            listofArrays.Add(list.ToArray()); //add last molecule when the loop is over.
-            return listofArrays.ToArray();
+            myElements = ConvertStringToElementList(elementString);
+            myTupleList.AddRange(from IChemical element in myElements select Tuple.Create(element, 1));
+            myTupleList[myTupleList.Count - 1] = Tuple.Create(myTupleList.Last().Item1, ParseOne(numberString));
+            if (myComplexList.Any())
+                myTupleList = myTupleList.Union(myComplexList).ToList();
+            return myTupleList.ToArray();
         }
 
-        private static int GetArrowLocation(string[] symbolArray)
+        private static List<Tuple<IChemical, int>> ProcessComplex(ref string myString)
         {
-            int arrowLocation = 0;
-            for (int i = 0; i < symbolArray.Length; i++)
-            {
-                if (symbolArray[i] == ">")
-                    arrowLocation = i;
-            }
-            return arrowLocation;
+            var myTupleList = new List<Tuple<IChemical, int>>();
+            int indexofLeftParen = myString.IndexOf('(');
+            int indexofRightParen = myString.IndexOf(')');
+            int number = 1;
+            string complexString = myString.Substring(indexofLeftParen + 1, indexofRightParen - indexofLeftParen - 1);
+            if (myString.Length > indexofRightParen + 1)
+                number = ParseOne(myString.Substring(indexofRightParen + 1, 1));
+            var myComplex = ParseComplex(complexString);
+            myTupleList.Add(Tuple.Create(myComplex, number));
+            int trimLength = indexofRightParen - indexofLeftParen + 1 + DigitsInCoefficient(number);
+            myString = myString.Remove(indexofLeftParen, trimLength);
+            return myTupleList;
         }
 
-        private static string[] CreateSymbolArray(string inputString)
+        public static int DigitsInCoefficient(int number)
         {
-            inputString = NormalizeCharacters(inputString);
-            StringBuilder commaSeperatedSymbols = GenerateCommaSeperatedSymbols(inputString);
-            RemoveUnwantedCharacters(commaSeperatedSymbols);
-            string[] symbolArray = commaSeperatedSymbols.ToString().Split(',');
-            return symbolArray;
+            int returnNumber = 0;
+            if (number != 1)
+                returnNumber = (number/10) + 1;
+            return returnNumber;
         }
 
-        private static void RemoveUnwantedCharacters(StringBuilder commaSeperatedSymbols)
+        private static string StripCoefficients(string myString)
         {
-            commaSeperatedSymbols.Replace(" ", "");
-            commaSeperatedSymbols.Replace("-", "");
-            RemoveExtraArrows(commaSeperatedSymbols);
+            while (char.IsDigit(myString[0]))
+                myString = myString.Remove(0, 1);
+            return myString;
         }
 
-        private static void RemoveExtraArrows(StringBuilder commaSeperatedSymbols)
+        public static int ParseOne(string myString)
         {
-            bool foundFirstArrow = false;
-            for (int i = commaSeperatedSymbols.Length - 1; i > 0; i--)
-            {
-                if (commaSeperatedSymbols[commaSeperatedSymbols.Length - i] == '>')
-                {
-                    if (foundFirstArrow == false)
-                        foundFirstArrow = true;
-                    else
-                        commaSeperatedSymbols.Remove(commaSeperatedSymbols.Length - i, 2);
-                }
-            }
+            int myInt = 0;
+            return int.TryParse(myString, out myInt) ? myInt : 1;
         }
 
-        private static StringBuilder GenerateCommaSeperatedSymbols(string inputString)
-        {
-            if (inputString.Length == 0)
-            {
-                throw new ArgumentException("Please enter some information!");
-            }
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < inputString.Length; i++)
-            {
-                if ((Char.IsUpper(inputString[i]) || inputString[i] == '>' || inputString[i] == '+' || inputString[i] == ')' || inputString[i] == '(') && sb.Length > 0)
-                    sb.Append(",");
-                if (char.IsDigit(inputString[i]))
-                {
-                    if (i == 0)
-                        throw new ArgumentException("Parser encountered an error: Equations may not begin with a number.");
-                    else
-                        if (!char.IsDigit(inputString[i - 1])) //Make sure this is the last digit in case of a two digit number.
-                            sb.Append(",");
-                }
-                sb.Append(inputString[i]);
-            }
-            //sb.Append(",|"); //Pipe is used as an "end of equation" character for the parser.
-            return sb;
-        }
 
         private static string NormalizeCharacters(string inputString)
         {
             inputString = inputString.Replace("[", "(");
+            inputString = inputString.Replace("-", " ");
             inputString = inputString.Replace("]", ")");
             inputString = inputString.Replace("=", ">");
+            while (inputString.Contains(">>"))
+                inputString = inputString.Replace(">>", ">");
+            inputString = inputString.Replace("+", " ");
+            inputString = inputString.TrimInternal();
+            inputString = inputString.Trim();
             return inputString;
         }
 
-        private static void CheckForValidEquation(ChemicalEquation unbalancedEquation)
+
+        public static List<Element> ConvertStringToElementList(string myString)
         {
-            foreach (Element e in unbalancedEquation.Elements)
+            var myElements = new List<Element>();
+            if (TableOfElements.Instance.Any(x => x.Symbol == myString))
             {
-                if (!unbalancedEquation.Products.Elements.Contains(e) || !unbalancedEquation.Reactants.Elements.Contains(e))
-                    throw new ArgumentException("Error: the element or complex " + e.ToString() + " could not be found on both sides of the equation.");
+                myElements.Add(TableOfElements.Instance.First(x => x.Symbol == myString));
             }
+            else if (myString.Count() > 1 && char.IsUpper(myString[0]) && char.IsLower(myString[1]))
+            {
+                myElements = AddSubListOfElements(myString, myElements, 2);
+            }
+            else if (myString.Count() > 1 && TableOfElements.Instance.Any(x => x.Symbol == myString.Substring(0, 1)))
+            {
+                myElements = AddSubListOfElements(myString, myElements, 1);
+            }
+            else if (myString.Count() > 2 && TableOfElements.Instance.Any(x => x.Symbol == myString.Substring(0, 2)))
+            {
+                myElements = AddSubListOfElements(myString, myElements, 2);
+            }
+            else if (TableOfElements.Instance.Any(x => x.Symbol.ToUpper() == myString.ToUpper()))
+            {
+                myElements.Add(TableOfElements.Instance.First(x => x.Symbol.ToUpper() == myString.ToUpper()));
+            }
+            if (!myElements.Any() && TableOfElements.Instance.Any(x => x.Symbol.ToUpper() == myString.ToUpper()))
+            {
+                myElements.Add(TableOfElements.Instance.First(x => x.Symbol.ToUpper() == myString.ToUpper()));
+            }
+            return myElements;
+        }
+
+        private static List<Element> AddSubListOfElements(string myString, List<Element> myElements, int subStringNumber)
+        {
+            var mySubList = ConvertStringToElementList(myString.Substring(subStringNumber, myString.Length - subStringNumber));
+            if (mySubList.Any())
+            {
+                myElements.Add(TableOfElements.Instance.First(x => x.Symbol == myString.Substring(0, subStringNumber)));
+                myElements = myElements.Union(mySubList).ToList();
+            }
+            return myElements;
         }
     }
 }

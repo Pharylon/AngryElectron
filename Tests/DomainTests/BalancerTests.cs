@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AngryElectron.Domain;
 using System.Collections.Generic;
@@ -27,17 +28,33 @@ namespace AngryElectron.Tests.Domain
         }
 
         [TestMethod]
+        public void BalanceWithSpaceInSteadOfPlus()
+        {
+            myEquation = Parser.Parse("H2O -> H O");
+            myEquation = Balancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToString() == "H2O -> 2H + O");
+        }
+
+        [TestMethod]
         public void BalancerHTMLTest()
         {
             myEquation = Parser.Parse("FeS2 + O2 -> Fe2O3 + SO2");
             myEquation = Balancer.Balance(myEquation);
-            Assert.IsTrue(myEquation.ToHTML() == "4FeS<sub>2</sub> + 11O<sub>2</sub> -> 2Fe<sub>2</sub>O<sub>3</sub> + 8SO<sub>2</sub>");
+            Assert.IsTrue(myEquation.ToHtml() == "4FeS<sub>2</sub> + 11O<sub>2</sub> -> 2Fe<sub>2</sub>O<sub>3</sub> + 8SO<sub>2</sub>");
         }
 
         [TestMethod]
         public void BalancerWithComplexTest()
         {
             myEquation = Parser.Parse("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
+            myEquation = Balancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToString() == "CaCl2 + 2Ag(NO3) -> Ca(NO3)2 + 2AgCl");
+        }
+
+        [TestMethod]
+        public void BalancerWithComplexWithSpaceInsteadOfPlus()
+        {
+            myEquation = Parser.Parse("CaCl2   Ag(NO3) -> Ca(NO3)2  AgCl");
             myEquation = Balancer.Balance(myEquation);
             Assert.IsTrue(myEquation.ToString() == "CaCl2 + 2Ag(NO3) -> Ca(NO3)2 + 2AgCl");
         }
@@ -55,7 +72,7 @@ namespace AngryElectron.Tests.Domain
         {
             myEquation = Parser.Parse("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
             myEquation = Balancer.Balance(myEquation);
-            Assert.IsTrue(myEquation.ToHTML() == "CaCl<sub>2</sub> + 2Ag(NO<sub>3</sub>) -> Ca(NO<sub>3</sub>)<sub>2</sub> + 2AgCl");
+            Assert.IsTrue(myEquation.ToHtml() == "CaCl<sub>2</sub> + 2Ag(NO<sub>3</sub>) -> Ca(NO<sub>3</sub>)<sub>2</sub> + 2AgCl");
         }
 
         [TestMethod]
@@ -79,7 +96,7 @@ namespace AngryElectron.Tests.Domain
         {
             myEquation = Parser.Parse("HCl + Na = NaCl + H2");
             myEquation = Balancer.Balance(myEquation);
-            Assert.IsTrue(myEquation.ToHTML() == "2HCl + 2Na -> 2NaCl + H<sub>2</sub>");
+            Assert.IsTrue(myEquation.ToHtml() == "2HCl + 2Na -> 2NaCl + H<sub>2</sub>");
         }
 
         [TestMethod]
@@ -91,11 +108,78 @@ namespace AngryElectron.Tests.Domain
         }
 
         [TestMethod]
+        public void BasicChemicalBuilder()
+        {
+            var myChemicals = Parser.ConvertStringToElementList("H").ToList();
+            Assert.IsTrue(myChemicals[0] == TableOfElements.Instance[0]);
+        }
+
+        [TestMethod]
+        public void WrongCapitalization()
+        {
+            var myChemical = Parser.ConvertStringToElementList("h").ToList();
+            Assert.IsTrue(myChemical[0] == TableOfElements.Instance[0]);
+        }
+
+        [TestMethod]
+        public void ChemicalBuilderTwoLetters()
+        {
+            var myChemical = Parser.ConvertStringToElementList("Ca").ToList();
+            Assert.IsTrue(myChemical[0] == TableOfElements.Instance.First(x => x.Symbol == "Ca"));
+        }
+
+        [TestMethod]
+        public void ChemicalBuilderTwoLettersLowercase()
+        {
+            var myChemical = Parser.ConvertStringToElementList("ca").ToList();
+            Assert.IsTrue(myChemical[0] == TableOfElements.Instance.First(x => x.Symbol == "Ca"));
+        }
+
+        [TestMethod]
+        public void ChemicalBuilderTwoLettersUppercase()
+        {
+            var myChemical = Parser.ConvertStringToElementList("CA").ToList();
+            Assert.IsTrue(myChemical[0] == TableOfElements.Instance.First(x => x.Symbol == "Ca"));
+        }
+
+        [TestMethod]
+        public void ChemicalBuilderTwoElements()
+        {
+            var myChemical = Parser.ConvertStringToElementList("CaCl");
+            Assert.IsTrue(myChemical[0] == TableOfElements.Instance.First(x => x.Symbol == "Ca"));
+            Assert.IsTrue(myChemical[1] == TableOfElements.Instance.First(x => x.Symbol == "Cl"));
+        }
+
+        [TestMethod]
         public void IsBalancedTest()
         {
             myEquation = Parser.Parse("FeS2 + O2 -> Fe2O3 + SO2");
             myEquation = Balancer.Balance(myEquation);
             Assert.IsTrue(myEquation.IsBalanced);
+        }
+
+        [TestMethod]
+        public void DigitsInCoefficient()
+        {
+            int x = Parser.DigitsInCoefficient(2);
+            int y = Parser.DigitsInCoefficient(3);
+            Assert.IsTrue(x == y);
+        }
+
+        [TestMethod]
+        public void RandomTest()
+        {
+            int i = 12;
+            int x = i/10;
+            Assert.IsTrue(x == 1);
+        }
+
+        [TestMethod]
+        public void LazyCoefficents()
+        {
+            myEquation = Parser.Parse("Cacl2 ag(NO3) -> ca(no3)2 + agcl");
+            myEquation = Balancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToHtml() == "CaCl<sub>2</sub> + 2Ag(NO<sub>3</sub>) -> Ca(NO<sub>3</sub>)<sub>2</sub> + 2AgCl");
         }
     }
 }

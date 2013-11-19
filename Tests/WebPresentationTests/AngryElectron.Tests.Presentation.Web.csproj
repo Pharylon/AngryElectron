@@ -99,12 +99,6 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Presentation\Web\AngryElectron.Presentation.Web.csproj">
-      <Project>{7A59EA14-E0ED-47F9-A639-E5CDAC10A387}</Project>
-      <Name>AngryElectron.Presentation.Web</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

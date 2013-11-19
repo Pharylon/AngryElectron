@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class Complex : ChemicalGroup
+    class Complex : ChemicalGroup, IComparable<IChemical>
     {
         public override void Add(IChemical chemical)
         {
@@ -44,6 +44,21 @@ namespace AngryElectron.Domain
             }
             sb.Append(")");
             return sb.ToString();
+        }
+
+        public int CompareTo(IChemical other)
+        {
+            var myTable = TableOfElements.Instance;
+            if (other == this)
+                return 0;
+            else if (other.ToString() == "C")
+                return 1;
+            else if (other.ToString() == "H")
+                return 1;
+            else if (other is Complex)
+                return -1;
+            else
+                return string.Compare(this.ToString(), other.ToString());
         }
     }
 }

@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public abstract class ChemicalGroup : IChemical, IEnumerator<IChemical>, IEnumerable<IChemical>
+    public abstract class ChemicalGroup : IChemical, IEnumerator<IChemical>, IEnumerable<IChemical>, IComparable<IChemical>
     {
         protected List<IChemical> contents = new List<IChemical>();
 
         public virtual void Add(IChemical chemical)
         {
             contents.Add(chemical);
+            //contents.Sort(new ChemicalComparer());
         }
 
         public Element[] Elements
@@ -91,12 +92,18 @@ namespace AngryElectron.Domain
 
         public IEnumerator<IChemical> GetEnumerator()
         {
-            return (IEnumerator<IChemical>)this;
+            foreach (var chemical in contents)
+            {
+                if (chemical == null)
+                    break;
+                else
+                    yield return chemical;
+            }
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return (IEnumerator<IChemical>)this;
+            return this.GetEnumerator();
         }
 
         public void Dispose()
@@ -115,6 +122,21 @@ namespace AngryElectron.Domain
         {
             get { return contents[i]; }
             set { contents[i] = value; }
+        }
+
+        public int CompareTo(IChemical other)
+        {
+            var myTable = TableOfElements.Instance;
+            if (other == this)
+                return 0;
+            else if (other.ToString() == "C")
+                return 1;
+            else if (other.ToString() == "H")
+                return 1;
+            else if (other is Complex)
+                return -1;
+            else
+                return string.Compare(this.ToString(), other.ToString());
         }
     }
 }

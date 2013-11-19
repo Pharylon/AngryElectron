@@ -28,7 +28,6 @@ namespace AngryElectron.Domain
         { 
             get
             {
-                
                 StreamReader streamReader = new StreamReader(path);
                 return streamReader.ReadToEnd().ToString();
             }
